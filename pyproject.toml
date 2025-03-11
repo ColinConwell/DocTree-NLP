@@ -3,11 +3,10 @@ name = "notion-nlp"
 version = "0.1.0"
 description = "A Python library for processing Notion documents with NLP capabilities and hierarchical organization"
 authors = [
-    {name = "Notion NLP Team", email = "info@example.com"},
+    {name = "Colin Conwell", email = "colinconwell@gmail.com"},
 ]
-requires-python = ">=3.11"
-license = {text = "MIT"}
 readme = "README.md"
+license = {text = "MIT"}
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -17,6 +16,7 @@ classifiers = [
     "Topic :: Text Processing :: Linguistic",
 ]
 
+requires-python = ">=3.11"
 dependencies = [
     "flask-login>=0.6.3",
     "flask-wtf>=1.2.2",
@@ -42,9 +42,9 @@ notebook = [
     "notebook>=7.3.2",
 ]
 
+[tool.pytest.ini_options]
+pythonpath = ["."]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-
-[tool.pytest.ini_options]
-pythonpath = ["."]
