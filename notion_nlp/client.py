@@ -7,8 +7,7 @@ from datetime import datetime
 from typing import List, Dict, Any, Optional
 import requests
 
-from .models import Document, Block
-from .exceptions import AuthenticationError, NotionNLPError
+from .core import Document, Block, AuthenticationError, NotionNLPError
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)

@@ -14,7 +14,9 @@ from notion_nlp import (
     Block, 
     Hierarchy, 
     TextProcessor, 
-    Tagger,
+    Tagger
+)
+from notion_nlp.parsers import (
     doc_to_dict, 
     export_to_markdown, 
     export_to_rst, 

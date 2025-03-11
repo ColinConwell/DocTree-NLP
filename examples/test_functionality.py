@@ -11,7 +11,7 @@ from notion_nlp import (
     Document,
     Block
 )
-from notion_nlp.exceptions import NotionNLPError
+from notion_nlp.core import NotionNLPError
 
 def analyze_document_structure(blocks: List[Block]):
     """Analyze and display document structure."""

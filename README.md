@@ -1,3 +1,7 @@
+# NotioNLPToolkit
+
+Process Notion documents with NLP capabilities and hierarchical organization.
+
 ## Authentication Setup
 
 ### Getting Your Notion API Token
@@ -85,6 +89,31 @@ for doc in documents:
     tags = [tagger.generate_tags(block) for block in blocks]
 ```
 
+## Document Parsing
+
+You can convert Notion documents to various formats:
+
+```python
+from notion_nlp import NotionClient, export_to_markdown, export_to_rst, doc_to_dict
+
+# Initialize client
+client = NotionClient(os.environ['NOTION_API_TOKEN'])
+
+# Get a document
+documents = client.list_documents()
+doc = documents[0]  # First document
+blocks = client.get_document_content(doc.id)
+
+# Convert to different formats
+markdown_text = export_to_markdown(blocks)
+rst_text = export_to_rst(blocks)
+doc_dict = doc_to_dict(blocks)
+
+# Load example documents
+from notion_nlp import load_example_document
+example_blocks = load_example_document("meeting_notes")
+```
+
 ## Interactive Demo
 
 Launch the interactive Streamlit demo:
@@ -105,6 +134,17 @@ Or run with test validation:
 
 ```bash
 python -m pytest tests/
+```
+
+### Project Structure
+
+```
+notion_nlp/
+├── __init__.py       # Package exports
+├── client.py         # Notion API client
+├── core.py           # Core models, hierarchy, tagging, exceptions
+├── parsers.py        # Document parsing and env utilities
+└── text_processor.py # NLP capabilities
 ```
 
 ## Similar Tools
