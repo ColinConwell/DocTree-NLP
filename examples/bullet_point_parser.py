@@ -7,7 +7,7 @@ into a nested dictionary structure.
 import re
 import json
 from typing import List, Dict, Any
-from notion_nlp import DocumentHierarchy
+from notion_nlp import Hierarchy
 from notion_nlp.models import Block
 
 def parse_bullet_points(text: str) -> Dict[str, Any]:
@@ -44,7 +44,7 @@ def parse_bullet_points(text: str) -> Dict[str, Any]:
         blocks.append(block)
     
     # Build hierarchy
-    hierarchy = DocumentHierarchy()
+    hierarchy = Hierarchy()
     root = hierarchy.build_hierarchy(blocks)
     
     # Convert hierarchy to dictionary
@@ -163,14 +163,14 @@ def main():
             )
             blocks.append(block)
         
-        # Build hierarchy using DocumentHierarchy
-        hierarchy = DocumentHierarchy()
+        # Build hierarchy using Hierarchy
+        hierarchy = Hierarchy()
         root = hierarchy.build_hierarchy(blocks)
         
         # Convert to dictionary
         hierarchy_dict = hierarchy.to_dict()
         
-        print("\nDocumentHierarchy structure:")
+        print("\nHierarchy structure:")
         print(json.dumps(hierarchy_dict, indent=2))
         
         # Transform to natural nested dictionary

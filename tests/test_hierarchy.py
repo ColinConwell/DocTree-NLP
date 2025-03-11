@@ -2,13 +2,13 @@
 Tests for the document hierarchy implementation.
 """
 import pytest
-from notion_nlp.hierarchy import DocumentHierarchy, Node
+from notion_nlp.hierarchy import Hierarchy, Node
 from notion_nlp.models import Block
 
 @pytest.fixture
 def hierarchy():
     """Create a document hierarchy instance."""
-    return DocumentHierarchy()
+    return Hierarchy()
 
 def test_build_hierarchy(hierarchy):
     """Test building document hierarchy."""

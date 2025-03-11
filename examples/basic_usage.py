@@ -1,7 +1,7 @@
 """
 Example usage of the Notion NLP library.
 """
-from notion_nlp import NotionClient, TextProcessor, DocumentHierarchy, Tagger
+from notion_nlp import NotionClient, TextProcessor, Hierarchy, Tagger
 from notion_nlp.env_loader import get_env
 from notion_nlp.exceptions import AuthenticationError
 
@@ -41,7 +41,7 @@ def main():
                 print(f"- Keywords: {', '.join(block['keywords'])}")
 
             # Build hierarchy
-            hierarchy = DocumentHierarchy()
+            hierarchy = Hierarchy()
             root = hierarchy.build_hierarchy(blocks)
 
             print("\nDocument structure:")

@@ -6,7 +6,7 @@ from typing import List, Dict
 from notion_nlp import (
     NotionClient, 
     TextProcessor, 
-    DocumentHierarchy, 
+    Hierarchy, 
     Tagger,
     Document,
     Block
@@ -15,7 +15,7 @@ from notion_nlp.exceptions import NotionNLPError
 
 def analyze_document_structure(blocks: List[Block]):
     """Analyze and display document structure."""
-    hierarchy = DocumentHierarchy()
+    hierarchy = Hierarchy()
     root = hierarchy.build_hierarchy(blocks)
 
     # Convert to JSON for pretty printing
