@@ -2,7 +2,7 @@
 Tests for the tagging system implementation.
 """
 import pytest
-from notion_nlp.tags import Tagger
+from notion_nlp.tagger import Tagger
 from notion_nlp.models import Block, Tag
 
 @pytest.fixture

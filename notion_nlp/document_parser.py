@@ -29,16 +29,18 @@ def doc_to_dict(document: Union[Document, List[Block], Hierarchy]) -> Dict[str, 
     if isinstance(document, Document):
         # Assuming Document has blocks attribute
         if hasattr(document, 'blocks'):
-            hierarchy = Hierarchy(document.blocks)
+            hierarchy = Hierarchy()
+            hierarchy.build_hierarchy(document.blocks)
     elif isinstance(document, list):
         # Assume it's a list of blocks
-        hierarchy = Hierarchy(document)
+        hierarchy = Hierarchy()
+        hierarchy.build_hierarchy(document)
     elif isinstance(document, Hierarchy):
         hierarchy = document
     else:
         raise TypeError(f"Expected Document, List[Block], or Hierarchy, got {type(document)}")
     
-    if not hierarchy:
+    if not hierarchy or not hierarchy.root or not hierarchy.root.children:
         return {}
     
     return _node_to_dict(hierarchy.root)
@@ -56,7 +58,7 @@ def _node_to_dict(node: Node, level: int = 0) -> Dict[str, Any]:
         A dictionary representing the node and its children
     """
     # Skip root node which is a placeholder
-    if node.block is None and node.children:
+    if node.block.type == "root" and node.children:
         result = {}
         for i, child in enumerate(node.children):
             child_dict = _node_to_dict(child, level)
@@ -64,8 +66,8 @@ def _node_to_dict(node: Node, level: int = 0) -> Dict[str, Any]:
         return result
     
     # Create dict for this node
-    block_type = node.block.type if node.block else "unknown"
-    block_content = node.block.content if node.block else ""
+    block_type = node.block.type
+    block_content = node.block.content
     
     # Determine key based on block type
     if block_type.startswith("heading_"):
@@ -131,15 +133,17 @@ def export_to_markdown(document: Union[Document, List[Block], Hierarchy]) -> str
     hierarchy = None
     if isinstance(document, Document):
         if hasattr(document, 'blocks'):
-            hierarchy = Hierarchy(document.blocks)
+            hierarchy = Hierarchy()
+            hierarchy.build_hierarchy(document.blocks)
     elif isinstance(document, list):
-        hierarchy = Hierarchy(document)
+        hierarchy = Hierarchy()
+        hierarchy.build_hierarchy(document)
     elif isinstance(document, Hierarchy):
         hierarchy = document
     else:
         raise TypeError(f"Expected Document, List[Block], or Hierarchy, got {type(document)}")
     
-    if not hierarchy:
+    if not hierarchy or not hierarchy.root:
         return ""
     
     return _node_to_markdown(hierarchy.root)
@@ -210,15 +214,17 @@ def export_to_rst(document: Union[Document, List[Block], Hierarchy]) -> str:
     hierarchy = None
     if isinstance(document, Document):
         if hasattr(document, 'blocks'):
-            hierarchy = Hierarchy(document.blocks)
+            hierarchy = Hierarchy()
+            hierarchy.build_hierarchy(document.blocks)
     elif isinstance(document, list):
-        hierarchy = Hierarchy(document)
+        hierarchy = Hierarchy()
+        hierarchy.build_hierarchy(document)
     elif isinstance(document, Hierarchy):
         hierarchy = document
     else:
         raise TypeError(f"Expected Document, List[Block], or Hierarchy, got {type(document)}")
     
-    if not hierarchy:
+    if not hierarchy or not hierarchy.root:
         return ""
     
     return _node_to_rst(hierarchy.root)
