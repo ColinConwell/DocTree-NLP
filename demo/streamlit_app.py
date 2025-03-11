@@ -5,7 +5,7 @@ import os
 import logging
 import traceback
 import streamlit as st
-from notion_nlp import NotionClient, TextProcessor, DocumentHierarchy, Tagger
+from notion_nlp import NotionClient, TextProcessor, Hierarchy, Tagger
 from notion_nlp.exceptions import AuthenticationError, NotionNLPError
 
 # Configure logging with more detail
@@ -168,7 +168,7 @@ try:
                 if st.button("🔄 Generate Hierarchy"):
                     with st.spinner("Building hierarchy..."):
                         try:
-                            hierarchy = DocumentHierarchy()
+                            hierarchy = Hierarchy()
                             root = hierarchy.build_hierarchy(
                                 st.session_state.current_blocks)
                             st.json(hierarchy.to_dict())
