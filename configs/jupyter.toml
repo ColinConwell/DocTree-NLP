@@ -1,0 +1,27 @@
+
+modules = ["python-3.11", "python3"]
+
+[nix]
+channel = "stable-24_05"
+
+[workflows]
+runButton = "Jupyter Notebook"
+
+[[workflows.workflow]]
+name = "Jupyter Notebook"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root --IdentityProvider.token='' --IdentityProvider.password_required='false'"
+waitForPort = 8888
+
+[[ports]]
+localPort = 8888
+externalPort = 80
