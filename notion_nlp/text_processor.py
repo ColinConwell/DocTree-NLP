@@ -3,7 +3,7 @@ Text processing and NLP capabilities.
 """
 from typing import List, Dict, Any
 import spacy
-from .models import Block
+from .core import Block
 
 class TextProcessor:
     """Handle text processing and NLP tasks."""

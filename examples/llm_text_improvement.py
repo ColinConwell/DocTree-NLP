@@ -7,8 +7,8 @@ by summarizing content or correcting spelling and grammar.
 from typing import Dict, Any, Optional
 import anthropic
 from notion_nlp import TextProcessor, Block
-from notion_nlp.env_loader import get_api_key
-from notion_nlp.exceptions import NotionNLPError
+from notion_nlp.parsers import get_api_key
+from notion_nlp.core import NotionNLPError
 
 class LLMTextImprover:
     """Handle text improvement using LLMs."""

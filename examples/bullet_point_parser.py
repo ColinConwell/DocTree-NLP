@@ -8,7 +8,7 @@ import re
 import json
 from typing import List, Dict, Any
 from notion_nlp import Hierarchy
-from notion_nlp.models import Block
+from notion_nlp.core import Block
 
 def parse_bullet_points(text: str) -> Dict[str, Any]:
     """

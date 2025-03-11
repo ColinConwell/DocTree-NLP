@@ -3,7 +3,7 @@ Simple script to check Notion API access and list available documents.
 """
 import os
 from notion_nlp import NotionClient
-from notion_nlp.exceptions import AuthenticationError, NotionNLPError
+from notion_nlp.core import AuthenticationError, NotionNLPError
 
 def main():
     try:
