@@ -2,30 +2,47 @@
 Notion NLP Library - Process Notion documents with NLP capabilities and hierarchical organization.
 """
 
-from .client import NotionClient
-from .core import Document, Block, Tag, Hierarchy, Tagger, NotionNLPError, AuthenticationError
-from .text_processor import TextProcessor
+__version__ = "0.1.0"
+
+from .api_client import (
+    NotionClient, NotionNLPError, AuthenticationError
+)
+
+from .api_env import (
+    EnvLoader, get_env, get_required_env, get_api_key
+)
+
+from .structure import (
+    Document, Block, Tag, Hierarchy, Tagger
+)
+
 from .parsers import (
-    EnvLoader, get_env, get_required_env, get_api_key,
     doc_to_dict, export_to_markdown, export_to_rst, load_example_document
 )
 
-__version__ = "0.1.0"
+from .text_processor import TextProcessor
 
-__all__ = [
-    "NotionClient",
-    "TextProcessor",
-    "Hierarchy",
-    "Tagger",
+DATA_STRUCTURES = [
     "Document",
     "Block",
     "Tag",
-    "NotionNLPError",
-    "AuthenticationError",
+    "Hierarchy",
+    "Tagger"
+]
+
+ENV_HELPERS = [
     "EnvLoader",
     "get_env",
     "get_required_env",
     "get_api_key",
+]
+
+__all__ = [
+    "NotionClient",
+    "EnvLoader",
+    *DATA_STRUCTURES,
+    *ENV_HELPERS,
+    "TextProcessor",
     "doc_to_dict",
     "export_to_markdown",
     "export_to_rst",

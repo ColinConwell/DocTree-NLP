@@ -1,17 +1,18 @@
 """
 Notion API client implementation with enhanced content handling.
 """
-import os
 import logging
-from datetime import datetime
-from typing import List, Dict, Any, Optional
 import requests
+from datetime import datetime
+from typing import List, Dict, Any
 
-from .core import Document, Block, AuthenticationError, NotionNLPError
+from .structure import Document, Block
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Notion Client ----------------------------------------------------------------
 
 class NotionClient:
     """Client for interacting with Notion API with enhanced content handling."""
@@ -264,3 +265,13 @@ class NotionClient:
         except Exception as e:
             logger.error(f"Error extracting rich text: {str(e)}")
             return ""
+        
+# Exceptions ------------------------------------------------------------
+
+class NotionNLPError(Exception):
+    """Base exception for Notion NLP library."""
+    pass
+
+class AuthenticationError(NotionNLPError):
+    """Raised when authentication fails."""
+    pass
