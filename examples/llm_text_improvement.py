@@ -5,10 +5,14 @@ This example demonstrates how to use Language Models (LLMs) to improve text
 by summarizing content or correcting spelling and grammar.
 """
 from typing import Dict, Any, Optional
-import anthropic
+
 from notion_nlp import TextProcessor, Block
 from notion_nlp.parsers import get_api_key
-from notion_nlp.core import NotionNLPError
+
+try:
+    import anthropic
+except ImportError:
+    raise ImportError("anthropic is not installed. Please install it with 'pip install anthropic'.")
 
 class LLMTextImprover:
     """Handle text improvement using LLMs."""

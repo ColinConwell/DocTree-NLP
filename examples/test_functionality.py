@@ -2,16 +2,16 @@
 Test script to verify core functionality of the Notion NLP library.
 """
 import os
-from typing import List, Dict
+from typing import List
+
 from notion_nlp import (
     NotionClient, 
-    TextProcessor, 
     Hierarchy, 
     Tagger,
-    Document,
-    Block
+    TextProcessor, 
+    Block,
+    NotionNLPError
 )
-from notion_nlp.core import NotionNLPError
 
 def analyze_document_structure(blocks: List[Block]):
     """Analyze and display document structure."""

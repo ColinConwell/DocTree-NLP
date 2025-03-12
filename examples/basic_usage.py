@@ -3,7 +3,7 @@ Example usage of the Notion NLP library.
 """
 from notion_nlp import NotionClient, TextProcessor, Hierarchy, Tagger
 from notion_nlp.parsers import get_env
-from notion_nlp.core import AuthenticationError
+from notion_nlp.structure import AuthenticationError
 
 def main():
     try:
