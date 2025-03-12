@@ -1,0 +1,212 @@
+[
+  {
+    "id": "head1",
+    "type": "heading_1",
+    "content": "Team Meeting Notes",
+    "parent_id": null,
+    "has_children": true
+  },
+  {
+    "id": "para1",
+    "type": "paragraph",
+    "content": "Meeting date: April 15, 2023",
+    "parent_id": "head1",
+    "has_children": false
+  },
+  {
+    "id": "head2_1",
+    "type": "heading_2",
+    "content": "Attendees",
+    "parent_id": "head1",
+    "has_children": true
+  },
+  {
+    "id": "bullet1",
+    "type": "bulleted_list_item",
+    "content": "John Smith (Project Manager)",
+    "parent_id": "head2_1",
+    "has_children": false
+  },
+  {
+    "id": "bullet2",
+    "type": "bulleted_list_item",
+    "content": "Sarah Johnson (Lead Developer)",
+    "parent_id": "head2_1",
+    "has_children": false
+  },
+  {
+    "id": "bullet3",
+    "type": "bulleted_list_item",
+    "content": "Michael Chen (UX Designer)",
+    "parent_id": "head2_1",
+    "has_children": false
+  },
+  {
+    "id": "bullet4",
+    "type": "bulleted_list_item",
+    "content": "Amanda Rodriguez (Product Owner)",
+    "parent_id": "head2_1",
+    "has_children": false
+  },
+  {
+    "id": "head2_2",
+    "type": "heading_2",
+    "content": "Agenda Items",
+    "parent_id": "head1",
+    "has_children": true
+  },
+  {
+    "id": "head3_1",
+    "type": "heading_3",
+    "content": "Project Status Update",
+    "parent_id": "head2_2",
+    "has_children": true
+  },
+  {
+    "id": "num1",
+    "type": "numbered_list_item",
+    "content": "Sprint 3 completed successfully with all user stories delivered",
+    "parent_id": "head3_1",
+    "has_children": false
+  },
+  {
+    "id": "num2",
+    "type": "numbered_list_item",
+    "content": "Current velocity: 35 story points per sprint",
+    "parent_id": "head3_1",
+    "has_children": false
+  },
+  {
+    "id": "num3",
+    "type": "numbered_list_item",
+    "content": "Two minor bugs identified in the last release",
+    "parent_id": "head3_1",
+    "has_children": true
+  },
+  {
+    "id": "bullet5",
+    "type": "bulleted_list_item",
+    "content": "Login issue on Safari browsers",
+    "parent_id": "num3",
+    "has_children": false
+  },
+  {
+    "id": "bullet6",
+    "type": "bulleted_list_item",
+    "content": "Dashboard data not refreshing automatically",
+    "parent_id": "num3",
+    "has_children": false
+  },
+  {
+    "id": "head3_2",
+    "type": "heading_3",
+    "content": "Upcoming Sprint Planning",
+    "parent_id": "head2_2",
+    "has_children": true
+  },
+  {
+    "id": "para2",
+    "type": "paragraph",
+    "content": "The team agreed to include the following items in the next sprint:",
+    "parent_id": "head3_2",
+    "has_children": false
+  },
+  {
+    "id": "bullet7",
+    "type": "bulleted_list_item",
+    "content": "User profile enhancement",
+    "parent_id": "head3_2",
+    "has_children": true
+  },
+  {
+    "id": "bullet7_1",
+    "type": "bulleted_list_item",
+    "content": "Profile picture upload",
+    "parent_id": "bullet7",
+    "has_children": false
+  },
+  {
+    "id": "bullet7_2",
+    "type": "bulleted_list_item",
+    "content": "Bio section with markdown support",
+    "parent_id": "bullet7",
+    "has_children": false
+  },
+  {
+    "id": "bullet8",
+    "type": "bulleted_list_item",
+    "content": "Analytics dashboard v2",
+    "parent_id": "head3_2",
+    "has_children": true
+  },
+  {
+    "id": "bullet8_1",
+    "type": "bulleted_list_item",
+    "content": "Custom date range selector",
+    "parent_id": "bullet8",
+    "has_children": false
+  },
+  {
+    "id": "bullet8_2",
+    "type": "bulleted_list_item",
+    "content": "Export to CSV/PDF options",
+    "parent_id": "bullet8",
+    "has_children": false
+  },
+  {
+    "id": "bullet9",
+    "type": "bulleted_list_item",
+    "content": "Bug fixes from previous sprint",
+    "parent_id": "head3_2",
+    "has_children": false
+  },
+  {
+    "id": "head2_3",
+    "type": "heading_2",
+    "content": "Action Items",
+    "parent_id": "head1",
+    "has_children": true
+  },
+  {
+    "id": "todo1",
+    "type": "paragraph",
+    "content": "Sarah: Address the Safari login issue by Wednesday",
+    "parent_id": "head2_3",
+    "has_children": false
+  },
+  {
+    "id": "todo2",
+    "type": "paragraph",
+    "content": "Michael: Complete wireframes for profile enhancement by Monday",
+    "parent_id": "head2_3",
+    "has_children": false
+  },
+  {
+    "id": "todo3",
+    "type": "paragraph",
+    "content": "John: Update the project timeline and share with stakeholders",
+    "parent_id": "head2_3",
+    "has_children": false
+  },
+  {
+    "id": "todo4",
+    "type": "paragraph",
+    "content": "Amanda: Schedule user testing sessions for next Thursday",
+    "parent_id": "head2_3",
+    "has_children": false
+  },
+  {
+    "id": "head2_4",
+    "type": "heading_2",
+    "content": "Next Meeting",
+    "parent_id": "head1",
+    "has_children": true
+  },
+  {
+    "id": "para3",
+    "type": "paragraph",
+    "content": "April 22, 2023 at 10:00 AM in the main conference room",
+    "parent_id": "head2_4",
+    "has_children": false
+  }
+]
