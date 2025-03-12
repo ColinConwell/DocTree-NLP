@@ -6,11 +6,11 @@ import json
 from pathlib import Path
 import pytest
 
-from notion_nlp.structure import (
+from notionlp.structure import (
     Block, Hierarchy
 )
 
-from notion_nlp.parsers import (
+from notionlp.parsers import (
     doc_to_dict, 
     export_to_markdown, 
     export_to_rst, 

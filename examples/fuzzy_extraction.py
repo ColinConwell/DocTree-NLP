@@ -6,7 +6,7 @@ from text using regular expressions and fuzzy matching techniques.
 """
 import re
 from typing import List, Dict, Any, Pattern
-from notion_nlp import TextProcessor, Block
+from notionlp import TextProcessor, Block
 
 def extract_patterns(text: str, patterns: List[str], threshold: float = 0.7) -> List[Dict[str, Any]]:
     """

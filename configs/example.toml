@@ -4,10 +4,10 @@ modules = ["python-3.11", "python3"]
 channel = "stable-24_05"
 
 [workflows]
-runButton = "NotionNLP Example"
+runButton = "NotionLP Example"
 
 [[workflows.workflow]]
-name = "NotionNLP Example"
+name = "NotionLP Example"
 author = "agent"
 
 [workflows.workflow.metadata]

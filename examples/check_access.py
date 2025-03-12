@@ -2,7 +2,7 @@
 Simple script to check Notion API access and list available documents.
 """
 import os
-from notion_nlp.api_client import (
+from notionlp.api_client import (
     NotionClient, AuthenticationError, NotionNLPError
 )
 

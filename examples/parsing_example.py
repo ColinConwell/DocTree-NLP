@@ -1,8 +1,8 @@
 """
 Simple example demonstrating how to use the document parsing features.
 """
-from notion_nlp import Hierarchy
-from notion_nlp.parsers import (
+from notionlp import Hierarchy
+from notionlp.parsers import (
     load_example_document, 
     doc_to_dict, 
     export_to_markdown,

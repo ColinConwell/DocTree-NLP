@@ -5,8 +5,8 @@ import os
 import logging
 import traceback
 import streamlit as st
-from notion_nlp import NotionClient, TextProcessor, Hierarchy, Tagger
-from notion_nlp.core import AuthenticationError, NotionNLPError
+from notionlp import NotionClient, TextProcessor, Hierarchy, Tagger
+from notionlp.structure import AuthenticationError, NotionNLPError
 
 # Configure logging with more detail
 logging.basicConfig(
