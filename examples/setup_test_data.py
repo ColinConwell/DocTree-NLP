@@ -2,7 +2,7 @@
 Helper script to create test data in Notion for testing the Notion NLP library.
 """
 import os
-from notion_nlp import NotionClient, NotionNLPError
+from notionlp import NotionClient, NotionNLPError
 
 def find_parent_page(client: NotionClient) -> str:
     """Find a suitable parent page for our test document."""

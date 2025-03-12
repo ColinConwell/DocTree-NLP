@@ -4,8 +4,8 @@ Test the text processor module.
 import pytest
 from unittest.mock import MagicMock, patch
 
-from notion_nlp.structure import Block
-from notion_nlp.text_processor import TextProcessor
+from notionlp.structure import Block
+from notionlp.text_processor import TextProcessor
 
 @pytest.fixture
 def text_processor():

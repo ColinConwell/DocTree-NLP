@@ -37,7 +37,7 @@ echo "NOTION_API_TOKEN=your-notion-api-token" > .env
 
 3. During runtime (not recommended for production):
 ```python
-from notion_nlp import NotionClient
+from notionlp import NotionClient
 client = NotionClient("your-notion-api-token")
 ```
 
@@ -74,7 +74,7 @@ export NOTION_API_TOKEN='your-notion-api-token'
 
 3. Run the basic example:
 ```python
-from notion_nlp import NotionClient, TextProcessor, Tagger
+from notionlp import NotionClient, TextProcessor, Tagger
 
 # Initialize clients
 client = NotionClient(os.environ['NOTION_API_TOKEN'])
@@ -94,7 +94,7 @@ for doc in documents:
 You can convert Notion documents to various formats:
 
 ```python
-from notion_nlp import NotionClient, export_to_markdown, export_to_rst, doc_to_dict
+from notionlp import NotionClient, export_to_markdown, export_to_rst, doc_to_dict
 
 # Initialize client
 client = NotionClient(os.environ['NOTION_API_TOKEN'])
@@ -110,7 +110,7 @@ rst_text = export_to_rst(blocks)
 doc_dict = doc_to_dict(blocks)
 
 # Load example documents
-from notion_nlp import load_example_document
+from notionlp import load_example_document
 example_blocks = load_example_document("meeting_notes")
 ```
 
@@ -139,11 +139,12 @@ python -m pytest tests/
 ### Project Structure
 
 ```
-notion_nlp/
+notionlp/
 ├── __init__.py       # Package exports
-├── client.py         # Notion API client
-├── core.py           # Core models, hierarchy, tagging, exceptions
-├── parsers.py        # Document parsing and env utilities
+├── api_client.py     # Notion API client
+├── api_env.py        # Environment and API handling
+├── structure.py      # Core models, hierarchy, tagging
+├── parsers.py        # Document parsing utilities
 └── text_processor.py # NLP capabilities
 ```
 

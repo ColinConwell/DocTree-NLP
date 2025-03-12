@@ -4,7 +4,7 @@ Test script to verify core functionality of the Notion NLP library.
 import os
 from typing import List
 
-from notion_nlp import (
+from notionlp import (
     NotionClient, 
     Hierarchy, 
     Tagger,

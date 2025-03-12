@@ -1,9 +1,9 @@
 """
 Example usage of the Notion NLP library.
 """
-from notion_nlp import NotionClient, TextProcessor, Hierarchy, Tagger
-from notion_nlp.parsers import get_env
-from notion_nlp.structure import AuthenticationError
+from notionlp import NotionClient, TextProcessor, Hierarchy, Tagger
+from notionlp.parsers import get_env
+from notionlp.structure import AuthenticationError
 
 def main():
     try:
