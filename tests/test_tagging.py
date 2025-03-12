@@ -4,7 +4,7 @@ Test the tagging module.
 import pytest
 from unittest.mock import MagicMock, patch
 
-from notion_nlp.core import Tagger, Block, Tag
+from notion_nlp.structure import Tagger, Block    
 
 @pytest.fixture
 def tagger():

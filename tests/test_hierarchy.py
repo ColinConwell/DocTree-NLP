@@ -3,7 +3,7 @@ Test the hierarchy module.
 """
 import pytest
 
-from notion_nlp.core import Hierarchy, Node, Block
+from notion_nlp.structure import Hierarchy, Block
 
 @pytest.fixture
 def sample_blocks():

@@ -4,14 +4,13 @@ Core components for the Notion NLP library.
 This module contains the core data models, document hierarchy handling, 
 tagging functionality, and custom exceptions for the library.
 """
-from typing import List, Dict, Set, Any, Optional
-from dataclasses import dataclass, field
-from datetime import datetime
 import logging
 import spacy
+from datetime import datetime
 from pydantic import BaseModel
+from typing import List, Dict, Set, Optional
+from dataclasses import dataclass, field
 
-# Set up logging
 logger = logging.getLogger(__name__)
 
 # Data Structures ----------------------------------------------------
@@ -227,13 +226,3 @@ class Tagger:
             "positive": positive_words / total,
             "negative": negative_words / total
         }
-
-# Exceptions ------------------------------------------------------------
-
-class NotionNLPError(Exception):
-    """Base exception for Notion NLP library."""
-    pass
-
-class AuthenticationError(NotionNLPError):
-    """Raised when authentication fails."""
-    pass
