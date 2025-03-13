@@ -1,3 +1,7 @@
+# NotioNLPToolkit
+
+Process Notion documents with NLP capabilities and hierarchical organization.
+
 ## Authentication Setup
 
 ### Getting Your Notion API Token
@@ -33,7 +37,7 @@ echo "NOTION_API_TOKEN=your-notion-api-token" > .env
 
 3. During runtime (not recommended for production):
 ```python
-from notion_nlp import NotionClient
+from notionlp import NotionClient
 client = NotionClient("your-notion-api-token")
 ```
 
@@ -70,7 +74,7 @@ export NOTION_API_TOKEN='your-notion-api-token'
 
 3. Run the basic example:
 ```python
-from notion_nlp import NotionClient, TextProcessor, Tagger
+from notionlp import NotionClient, TextProcessor, Tagger
 
 # Initialize clients
 client = NotionClient(os.environ['NOTION_API_TOKEN'])
@@ -83,6 +87,31 @@ for doc in documents:
     blocks = client.get_document_content(doc.id)
     processed = processor.process_blocks(blocks)
     tags = [tagger.generate_tags(block) for block in blocks]
+```
+
+## Document Parsing
+
+You can convert Notion documents to various formats:
+
+```python
+from notionlp import NotionClient, export_to_markdown, export_to_rst, doc_to_dict
+
+# Initialize client
+client = NotionClient(os.environ['NOTION_API_TOKEN'])
+
+# Get a document
+documents = client.list_documents()
+doc = documents[0]  # First document
+blocks = client.get_document_content(doc.id)
+
+# Convert to different formats
+markdown_text = export_to_markdown(blocks)
+rst_text = export_to_rst(blocks)
+doc_dict = doc_to_dict(blocks)
+
+# Load example documents
+from notionlp import load_example_document
+example_blocks = load_example_document("meeting_notes")
 ```
 
 ## Interactive Demo
@@ -105,6 +134,18 @@ Or run with test validation:
 
 ```bash
 python -m pytest tests/
+```
+
+### Project Structure
+
+```
+notionlp/
+├── __init__.py       # Package exports
+├── api_client.py     # Notion API client
+├── api_env.py        # Environment and API handling
+├── structure.py      # Core models, hierarchy, tagging
+├── parsers.py        # Document parsing utilities
+└── text_processor.py # NLP capabilities
 ```
 
 ## Similar Tools

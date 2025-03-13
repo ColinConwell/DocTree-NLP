@@ -1,9 +1,15 @@
 """
 Text processing and NLP capabilities.
 """
-from typing import List, Dict, Any
+import logging
 import spacy
-from .models import Block
+import subprocess
+from typing import List, Dict, Any
+
+from .structure import Block
+
+# Set up logging
+logger = logging.getLogger(__name__)
 
 class TextProcessor:
     """Handle text processing and NLP tasks."""
@@ -15,7 +21,12 @@ class TextProcessor:
         Args:
             model: spaCy model to use for NLP tasks
         """
-        self.nlp = spacy.load(model)
+        try:
+            self.nlp = spacy.load(model)
+        except OSError:
+            logger.info(f"Downloading spaCy model: {model}...")
+            _download_spacy_model(model)
+            self.nlp = spacy.load(model)
 
     def process_blocks(self, blocks: List[Block]) -> List[Dict[str, Any]]:
         """
@@ -84,3 +95,7 @@ class TextProcessor:
         )[:sentences]
         
         return " ".join(sent[0] for sent in summary_sentences)
+    
+def _download_spacy_model(model: str):
+    """Download the spaCy model if it doesn't exist."""
+    subprocess.run(["python", "-m", "spacy", "download", model])

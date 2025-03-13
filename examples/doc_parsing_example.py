@@ -10,11 +10,9 @@ import json
 import os
 from pathlib import Path
 
-from notion_nlp import (
-    Block, 
-    Hierarchy, 
-    TextProcessor, 
-    Tagger,
+from notionlp import Hierarchy
+
+from notionlp.parsers import (
     doc_to_dict, 
     export_to_markdown, 
     export_to_rst, 

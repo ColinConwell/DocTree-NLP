@@ -1,21 +1,25 @@
-"""
-Environment variable loader for NotioNLP.
-
-This module provides utilities for loading environment variables from various sources,
-including environment variables, .env files, and other configuration sources.
-"""
-import os
 import logging
-from typing import Dict, Optional, List, Any
+import os
+from typing import Optional, Any
+from dotenv import load_dotenv
 
+# Set up logging
 logger = logging.getLogger(__name__)
 
-try:
-    from dotenv import load_dotenv
-    DOTENV_AVAILABLE = True
-except ImportError:
-    DOTENV_AVAILABLE = False
-    logger.info("python-dotenv not installed. .env file loading will be unavailable.")
+# Environment Variable Loading ----------------------------------------------------
+
+DOTENV_AVAILABLE = False
+
+def _load_dotenv():
+    """Load the .env file if it exists."""
+    global DOTENV_AVAILABLE
+
+    try:
+        from dotenv import load_dotenv
+        DOTENV_AVAILABLE = True
+    except ImportError:
+        DOTENV_AVAILABLE = False
+        logger.info("python-dotenv not installed. .env file loading will be unavailable.")
 
 class EnvLoader:
     """Handle environment variable loading from various sources."""
