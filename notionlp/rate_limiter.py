@@ -7,7 +7,6 @@ the API's limits (3 requests per second).
 import time
 import logging
 from collections import deque
-from datetime import datetime
 from typing import Deque, Tuple
 
 # Set up logging

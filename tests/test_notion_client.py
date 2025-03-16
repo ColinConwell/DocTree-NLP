@@ -28,6 +28,17 @@ def test_init():
     assert client.token == "test_token"
     assert "Bearer test_token" in client.headers["Authorization"]
     assert client.headers["Notion-Version"] == "2022-06-28"
+    
+def test_api_specific_cache():
+    """Test that different API tokens use different cache directories."""
+    client1 = NotionClient("token1")
+    client2 = NotionClient("token2")
+    
+    # Check that cache managers use different directories
+    assert client1.cache_manager.cache_dir != client2.cache_manager.cache_dir
+    
+    # Verify that max_age_days is None by default (no expiry)
+    assert client1.cache_manager.max_age_seconds is None
 
 def test_authenticate_success(notion_client, mock_response):
     """Test successful authentication."""
@@ -49,6 +60,7 @@ def test_authenticate_failure(notion_client):
 
 def test_list_documents(notion_client):
     """Test listing documents."""
+    # Create mock response for the API call
     mock_response = MagicMock()
     mock_response.status_code = 200
     mock_response.json.return_value = {
@@ -58,26 +70,47 @@ def test_list_documents(notion_client):
                 "created_time": "2023-01-01T00:00:00Z",
                 "last_edited_time": "2023-01-02T00:00:00Z",
                 "properties": {
-                    "title": [{"text": {"content": "Test Page"}}]
+                    "title": {"title": [{"text": {"content": "Test Page"}}]}
                 }
             }
         ]
     }
     
-    with patch("requests.post", return_value=mock_response) as mock_post:
-        documents = notion_client.list_documents()
-        
-        mock_post.assert_called_once()
-        assert len(documents) == 1
-        assert documents[0].id == "page1"
-        assert documents[0].title == "Test Page"
-        assert isinstance(documents[0], Document)
+    # Mock the cache check to return None (forcing API call)
+    with patch.object(notion_client, 'cache_manager', None):
+        # Apply patch to requests.post
+        with patch("requests.post", return_value=mock_response) as mock_post:
+            # Call the method under test with cache disabled
+            documents = notion_client.list_documents(use_cache=False)
+            
+            # Verify the POST request was made with correct parameters
+            mock_post.assert_called_once()
+            assert "/search" in mock_post.call_args[0][0]
+            
+            # Verify the response was processed correctly
+            assert len(documents) == 1
+            assert documents[0].id == "page1"
+            assert documents[0].title == "Test Page"
+            assert isinstance(documents[0], Document)
 
 def test_get_document_content(notion_client):
     """Test getting document content."""
-    mock_response = MagicMock()
-    mock_response.status_code = 200
-    mock_response.json.return_value = {
+    # Mock response for document metadata
+    mock_metadata_response = MagicMock()
+    mock_metadata_response.status_code = 200
+    mock_metadata_response.json.return_value = {
+        "id": "page1",
+        "created_time": "2023-01-01T00:00:00Z",
+        "last_edited_time": "2023-01-02T00:00:00Z",
+        "properties": {
+            "title": [{"text": {"content": "Test Page"}}]
+        }
+    }
+    
+    # Mock response for document content
+    mock_content_response = MagicMock()
+    mock_content_response.status_code = 200
+    mock_content_response.json.return_value = {
         "results": [
             {
                 "id": "block1",
@@ -91,10 +124,26 @@ def test_get_document_content(notion_client):
         "has_more": False
     }
     
-    with patch("requests.get", return_value=mock_response) as mock_get:
-        blocks = notion_client.get_document_content("page1")
+    # Apply patches to handle both API calls
+    with patch("requests.get") as mock_get:
+        # Configure the mock to return different responses based on the URL
+        def side_effect(url, **kwargs):
+            if "/pages/" in url:
+                return mock_metadata_response
+            elif "/blocks/" in url:
+                return mock_content_response
+            return MagicMock(status_code=404)
+            
+        mock_get.side_effect = side_effect
         
-        mock_get.assert_called_once()
+        # Call the method under test
+        document, blocks = notion_client.get_document_content("page1")
+        
+        # Verify results
+        assert document.id == "page1"
+        assert document.title == "Test Page"
+        assert isinstance(document, Document)
+        
         assert len(blocks) == 1
         assert blocks[0].id == "block1"
         assert blocks[0].type == "paragraph"
