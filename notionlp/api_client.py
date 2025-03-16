@@ -3,9 +3,8 @@ Notion API client implementation with enhanced content handling.
 """
 import logging
 import requests
-import os
 from datetime import datetime
-from typing import List, Dict, Any, Optional, Union, Tuple
+from typing import List, Dict, Any, Optional, Tuple
 
 from .structure import Document, Block
 from .cache_manager import CacheManager, DEFAULT_CACHE_DIR
@@ -24,13 +23,13 @@ class NotionClient:
     API_VERSION = "2022-06-28"
     DEFAULT_RATE_LIMIT = 3  # API limit: 3 requests per second
     DEFAULT_CACHE_ENABLED = True
-    DEFAULT_MAX_CACHE_AGE_DAYS = 1
+    DEFAULT_MAX_CACHE_AGE_DAYS = None  # No expiration by default
 
     def __init__(self, 
                  token: str, 
                  cache_enabled: bool = DEFAULT_CACHE_ENABLED,
                  cache_dir: str = DEFAULT_CACHE_DIR,
-                 max_cache_age_days: int = DEFAULT_MAX_CACHE_AGE_DAYS,
+                 max_cache_age_days: Optional[int] = DEFAULT_MAX_CACHE_AGE_DAYS,
                  rate_limit: int = DEFAULT_RATE_LIMIT):
         """
         Initialize the Notion client.
@@ -39,7 +38,7 @@ class NotionClient:
             token: Notion API integration token
             cache_enabled: Whether to use caching
             cache_dir: Directory to store cache files
-            max_cache_age_days: Maximum age of cache entries in days
+            max_cache_age_days: Maximum age of cache entries in days (None for no expiry)
             rate_limit: Maximum number of requests per second
         """
         self.token = token
@@ -53,6 +52,7 @@ class NotionClient:
         self.cache_enabled = cache_enabled
         if self.cache_enabled:
             self.cache_manager = CacheManager(
+                api_token=token,  # Pass token to create API-specific cache
                 cache_dir=cache_dir,
                 max_age_days=max_cache_age_days
             )
@@ -510,9 +510,15 @@ class NotionClient:
             raise CacheError("Caching is disabled")
             
         try:
+            # Calculate max_age_days from seconds, handling None case
+            max_age_days = None
+            if hasattr(self.cache_manager, 'max_age_seconds') and self.cache_manager.max_age_seconds is not None:
+                max_age_days = self.cache_manager.max_age_seconds / (24 * 60 * 60)
+                
             self.cache_manager = CacheManager(
+                api_token=self.token,
                 cache_dir=cache_dir,
-                max_age_days=self.cache_manager.max_age_seconds / (24 * 60 * 60)
+                max_age_days=max_age_days
             )
             logger.info(f"Cache directory changed to {cache_dir}")
         except Exception as e:
@@ -543,10 +549,16 @@ class NotionClient:
             # Get total cache size
             total_size = sum(f.stat().st_size for f in cache_files)
             
+            # Calculate max_age_days
+            max_age_days = None
+            if hasattr(self.cache_manager, 'max_age_seconds') and self.cache_manager.max_age_seconds is not None:
+                max_age_days = self.cache_manager.max_age_seconds / (24 * 60 * 60)
+            
             return {
                 'enabled': self.cache_enabled,
                 'cache_dir': str(cache_dir),
                 'max_age_days': max_age_days,
+                'api_specific': True,  # Flag indicating cache is API-key specific
                 'num_files': num_files,
                 'total_size_bytes': total_size,
                 'total_size_mb': total_size / (1024 * 1024)

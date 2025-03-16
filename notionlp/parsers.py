@@ -4,12 +4,12 @@ Parsers and utilities for NotioNLPToolkit.
 This module provides convenience functions for parsing Notion documents
 into various formats including dictionaries, markdown, and RST.
 """
-from typing import Dict, Any, List, Optional, Union
 import os
 import json
 import re
 import logging
 from pathlib import Path
+from typing import Dict, Any, List, Union
 
 from .structure import Block, Document, Hierarchy, Node
 

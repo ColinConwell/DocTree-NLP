@@ -1,4 +1,5 @@
 # Specific Paths
+**/notion_cache/
 
 # IDE cache
 .cursorignore
