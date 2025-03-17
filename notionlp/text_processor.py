@@ -5,6 +5,7 @@ import logging
 import spacy
 import subprocess
 from typing import List, Dict, Any
+from tqdm.auto import tqdm
 
 from .structure import Block
 
@@ -40,29 +41,52 @@ class TextProcessor:
         """
         processed_blocks = []
         
-        for block in blocks:
-            doc = self.nlp(block.content)
-            
-            processed_block = {
-                "id": block.id,
-                "type": block.type,
-                "content": block.content,
-                "entities": [
-                    {
-                        "text": ent.text,
-                        "label": ent.label_,
-                        "start": ent.start_char,
-                        "end": ent.end_char
-                    } for ent in doc.ents
-                ],
-                "sentences": [str(sent) for sent in doc.sents],
-                "keywords": [
-                    token.text for token in doc
-                    if not token.is_stop and not token.is_punct and token.pos_ in ["NOUN", "PROPN"]
-                ]
-            }
-            
-            processed_blocks.append(processed_block)
+        for block in tqdm(blocks, desc="Processing blocks", unit="block"):
+            try:
+                # Check if block has content attribute and it's not None/empty
+                content = getattr(block, 'content', '')
+                if content is None:
+                    content = ''
+                    
+                doc = self.nlp(content)
+                
+                processed_block = {
+                    "id": block.id,
+                    "type": block.type,
+                    "content": content,
+                    "entities": [
+                        {
+                            "text": ent.text,
+                            "label": ent.label_,
+                            "start": ent.start_char,
+                            "end": ent.end_char
+                        } for ent in doc.ents
+                    ],
+                    "sentences": [str(sent) for sent in doc.sents],
+                    "keywords": [
+                        token.text for token in doc
+                        if not token.is_stop and not token.is_punct and token.pos_ in ["NOUN", "PROPN"]
+                    ]
+                }
+                
+                processed_blocks.append(processed_block)
+            except AttributeError as e:
+                logger.warning(f"Skipping block due to missing attributes: {e}")
+                # Add a minimal processed block with available information
+                try:
+                    processed_block = {
+                        "id": getattr(block, 'id', 'unknown'),
+                        "type": getattr(block, 'type', 'unknown'),
+                        "content": "",
+                        "entities": [],
+                        "sentences": [],
+                        "keywords": []
+                    }
+                    processed_blocks.append(processed_block)
+                except Exception:
+                    logger.error(f"Could not process block at all: {block}")
+            except Exception as e:
+                logger.error(f"Error processing block: {e}")
             
         return processed_blocks
 

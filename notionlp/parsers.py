@@ -10,6 +10,7 @@ import re
 import logging
 from pathlib import Path
 from typing import Dict, Any, List, Union
+from tqdm.auto import tqdm
 
 from .structure import Block, Document, Hierarchy, Node
 
@@ -168,7 +169,8 @@ def _node_to_markdown(node: Node, level: int = 0) -> str:
     
     # Skip root node which is a placeholder
     if node.block is None:
-        for child in node.children:
+        children = tqdm(node.children, desc="Converting to Markdown", unit="node") if level == 0 else node.children
+        for child in children:
             result.append(_node_to_markdown(child, level))
         return "\n".join(result)
     
@@ -249,7 +251,8 @@ def _node_to_rst(node: Node, level: int = 0) -> str:
     
     # Skip root node which is a placeholder
     if node.block is None:
-        for child in node.children:
+        children = tqdm(node.children, desc="Converting to RST", unit="node") if level == 0 else node.children
+        for child in children:
             result.append(_node_to_rst(child, level))
         return "\n".join(result)
     
@@ -309,7 +312,7 @@ def load_example_document(name: str) -> List[Block]:
     
     # Convert the JSON data to Block objects
     blocks = []
-    for block_data in data:
+    for block_data in tqdm(data, desc=f"Loading {name} example", unit="block"):
         blocks.append(Block(**block_data))
     
     return blocks

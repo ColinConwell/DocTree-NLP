@@ -37,8 +37,8 @@ def main():
     if documents:
         doc = documents[0]
         print(f"Fetching document '{doc.title}'...")
-        document, blocks = client.get_document_content(doc.id)
-        print(f"Retrieved {len(blocks)} blocks from document '{document.title}'")
+        metadata, blocks = client.get_document_content(doc.id)
+        print(f"Retrieved {len(blocks)} blocks from document '{metadata.title}'")
     
     end_time = time.time()
     print(f"First run took {end_time - start_time:.2f} seconds")
@@ -65,8 +65,8 @@ def main():
     if documents:
         doc = documents[0]
         print(f"Fetching document '{doc.title}'...")
-        document, blocks = client.get_document_content(doc.id)
-        print(f"Retrieved {len(blocks)} blocks from document '{document.title}'")
+        metadata, blocks = client.get_document_content(doc.id)
+        print(f"Retrieved {len(blocks)} blocks from document '{metadata.title}'")
     
     end_time = time.time()
     print(f"Second run took {end_time - start_time:.2f} seconds")
@@ -77,9 +77,9 @@ def main():
         start_time = time.time()
         doc = documents[0]
         print(f"Fetching document '{doc.title}' without cache...")
-        document, blocks = client.get_document_content(doc.id, use_cache=False)
+        metadata, blocks = client.get_document_content(doc.id, use_cache=False)
         end_time = time.time()
-        print(f"Retrieved {len(blocks)} blocks from document '{document.title}'")
+        print(f"Retrieved {len(blocks)} blocks from document '{metadata.title}'")
         print(f"Force fetching took {end_time - start_time:.2f} seconds")
     
     # Clear specific document from cache

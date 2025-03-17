@@ -152,10 +152,10 @@ try:
                             try:
                                 with st.spinner("Fetching content..."):
                                     start_time = time.time()
-                                    document, blocks = st.session_state.notion_client.get_document_content(doc.id)
+                                    metadata, blocks = st.session_state.notion_client.get_document_content(doc.id)
                                     fetch_time = time.time() - start_time
                                     
-                                    st.session_state.current_document = document
+                                    st.session_state.current_document = metadata
                                     st.session_state.current_blocks = blocks
                                     st.session_state.selected_doc_id = doc.id
                                     
@@ -187,11 +187,11 @@ try:
                         try:
                             with st.spinner("Fetching content (bypassing cache)..."):
                                 start_time = time.time()
-                                document, blocks = st.session_state.notion_client.get_document_content(
+                                metadata, blocks = st.session_state.notion_client.get_document_content(
                                     document.id, use_cache=False)
                                 fetch_time = time.time() - start_time
                                 
-                                st.session_state.current_document = document
+                                st.session_state.current_document = metadata
                                 st.session_state.current_blocks = blocks
                                 st.success(f"Refreshed content in {fetch_time:.2f}s")
                         except Exception as e:

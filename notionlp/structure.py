@@ -10,6 +10,7 @@ from datetime import datetime
 from pydantic import BaseModel
 from typing import List, Dict, Set, Optional
 from dataclasses import dataclass, field
+from tqdm.auto import tqdm
 
 logger = logging.getLogger(__name__)
 
@@ -71,7 +72,7 @@ class Hierarchy:
         current_level = {0: root}
         current_depth = 0
 
-        for block in blocks:
+        for block in tqdm(blocks, desc="Building document hierarchy", unit="block"):
             # Determine block level based on type and content
             depth = self._get_block_depth(block)
 
@@ -180,7 +181,7 @@ class Tagger:
         tags = []
         
         # Entity-based tags
-        for ent in doc.ents:
+        for ent in tqdm(doc.ents, desc="Generating entity tags", unit="entity", leave=False):
             tags.append(Tag(
                 name=ent.text.lower(),
                 type="entity",
@@ -194,7 +195,7 @@ class Tagger:
             and token.pos_ in ["NOUN", "PROPN", "ADJ"]
         ]
         
-        for keyword in keywords:
+        for keyword in tqdm(keywords, desc="Processing keywords", unit="keyword", leave=False):
             if keyword in self.custom_tags:
                 tags.append(Tag(
                     name=keyword,

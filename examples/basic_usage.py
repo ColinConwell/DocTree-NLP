@@ -36,11 +36,11 @@ def main():
             doc = documents[0]
             print(f"\nProcessing document: {doc.title}")
 
-            # The get_document_content method now returns a tuple (document, blocks)
-            document, blocks = client.get_document_content(doc.id)
-            print(f"Retrieved {len(blocks)} blocks from document '{document.title}'")
-            print(f"Last edited: {document.last_edited_time}")
-            print(f"Last fetched: {document.last_fetched}")
+            # The get_document_content method returns a tuple (metadata, blocks)
+            metadata, blocks = client.get_document_content(doc.id)
+            print(f"Retrieved {len(blocks)} blocks from document '{metadata.title}'")
+            print(f"Last edited: {metadata.last_edited_time}")
+            print(f"Last fetched: {metadata.last_fetched}")
 
             # Process text
             processor = TextProcessor()

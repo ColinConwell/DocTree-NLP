@@ -137,12 +137,12 @@ def test_get_document_content(notion_client):
         mock_get.side_effect = side_effect
         
         # Call the method under test
-        document, blocks = notion_client.get_document_content("page1")
+        metadata, blocks = notion_client.get_document_content("page1")
         
         # Verify results
-        assert document.id == "page1"
-        assert document.title == "Test Page"
-        assert isinstance(document, Document)
+        assert metadata.id == "page1"
+        assert metadata.title == "Test Page"
+        assert isinstance(metadata, Document)
         
         assert len(blocks) == 1
         assert blocks[0].id == "block1"

@@ -5,6 +5,7 @@ import logging
 import requests
 from datetime import datetime
 from typing import List, Dict, Any, Optional, Tuple
+from tqdm.auto import tqdm
 
 from .structure import Document, Block
 from .cache_manager import CacheManager, DEFAULT_CACHE_DIR
@@ -130,7 +131,7 @@ class NotionClient:
             results = response.json().get("results", [])
             documents = []
 
-            for result in results:
+            for result in tqdm(results, desc="Processing document list", unit="doc"):
                 try:
                     title = self._extract_title(result)
                     doc = Document(
@@ -188,7 +189,12 @@ class NotionClient:
             use_cache: Whether to use cache for this request (overrides instance setting)
 
         Returns:
-            Tuple[Document, List[Block]]: Document metadata and list of content blocks
+            Tuple[Document, List[Block]]: A tuple containing:
+                - metadata (Document): Document metadata including title, creation time, and edit time
+                - blocks (List[Block]): List of content blocks from the document
+                
+        Usage:
+            metadata, blocks = client.get_document_content(document_id)
         """
         # Determine whether to use cache for this request
         should_use_cache = self.cache_enabled if use_cache is None else use_cache
@@ -228,7 +234,7 @@ class NotionClient:
                 data = response.json()
                 results = data.get("results", [])
 
-                for result in results:
+                for result in tqdm(results, desc="Processing document blocks", unit="block", leave=False):
                     try:
                         block_type = result.get("type", "")
                         content = self._extract_block_content(result, block_type)
@@ -307,7 +313,7 @@ class NotionClient:
                 data = response.json()
                 results = data.get("results", [])
 
-                for result in results:
+                for result in tqdm(results, desc="Processing nested blocks", unit="block", leave=False):
                     try:
                         block_type = result.get("type", "")
                         content = self._extract_block_content(result, block_type)
