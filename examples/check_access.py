@@ -78,10 +78,17 @@ def main():
             # Try to fetch content
             print("\nFetching document content...")
             try:
+<<<<<<< HEAD
                 # Note: get_document_content returns tuple (metadata, blocks)
                 metadata, blocks = client.get_document_content(doc.id)
                 print(f"✓ Successfully retrieved {len(blocks)} blocks")
                 print(f"  Last fetched: {metadata.last_fetched}")
+=======
+                # Note: get_document_content now returns tuple (document, blocks)
+                document, blocks = client.get_document_content(doc.id)
+                print(f"✓ Successfully retrieved {len(blocks)} blocks")
+                print(f"  Last fetched: {document.last_fetched}")
+>>>>>>> origin/main
                 
                 # Display first few blocks
                 for i, block in enumerate(blocks[:3]):
@@ -92,7 +99,11 @@ def main():
                 # Force refresh without cache
                 print("\nForcing fresh fetch (bypassing cache)...")
                 start_time = time.time()
+<<<<<<< HEAD
                 metadata, blocks = client.get_document_content(doc.id, use_cache=False)
+=======
+                document, blocks = client.get_document_content(doc.id, use_cache=False)
+>>>>>>> origin/main
                 print(f"✓ Successfully retrieved {len(blocks)} blocks in {time.time() - start_time:.2f} seconds")
                     
             except NotionNLPError as e:

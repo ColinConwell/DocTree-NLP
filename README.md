@@ -84,7 +84,11 @@ tagger = Tagger()
 # List and process documents
 documents = client.list_documents()
 for doc in documents:
+<<<<<<< HEAD
     metadata, blocks = client.get_document_content(doc.id)
+=======
+    blocks = client.get_document_content(doc.id)
+>>>>>>> origin/main
     processed = processor.process_blocks(blocks)
     tags = [tagger.generate_tags(block) for block in blocks]
 ```
@@ -102,7 +106,11 @@ client = NotionClient(os.environ['NOTION_API_TOKEN'])
 # Get a document
 documents = client.list_documents()
 doc = documents[0]  # First document
+<<<<<<< HEAD
 metadata, blocks = client.get_document_content(doc.id)
+=======
+blocks = client.get_document_content(doc.id)
+>>>>>>> origin/main
 
 # Convert to different formats
 markdown_text = export_to_markdown(blocks)

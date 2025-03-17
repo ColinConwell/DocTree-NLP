@@ -5,7 +5,10 @@ import logging
 import requests
 from datetime import datetime
 from typing import List, Dict, Any, Optional, Tuple
+<<<<<<< HEAD
 from tqdm.auto import tqdm
+=======
+>>>>>>> origin/main
 
 from .structure import Document, Block
 from .cache_manager import CacheManager, DEFAULT_CACHE_DIR
@@ -131,7 +134,11 @@ class NotionClient:
             results = response.json().get("results", [])
             documents = []
 
+<<<<<<< HEAD
             for result in tqdm(results, desc="Processing document list", unit="doc"):
+=======
+            for result in results:
+>>>>>>> origin/main
                 try:
                     title = self._extract_title(result)
                     doc = Document(
@@ -189,12 +196,16 @@ class NotionClient:
             use_cache: Whether to use cache for this request (overrides instance setting)
 
         Returns:
+<<<<<<< HEAD
             Tuple[Document, List[Block]]: A tuple containing:
                 - metadata (Document): Document metadata including title, creation time, and edit time
                 - blocks (List[Block]): List of content blocks from the document
                 
         Usage:
             metadata, blocks = client.get_document_content(document_id)
+=======
+            Tuple[Document, List[Block]]: Document metadata and list of content blocks
+>>>>>>> origin/main
         """
         # Determine whether to use cache for this request
         should_use_cache = self.cache_enabled if use_cache is None else use_cache
@@ -234,7 +245,11 @@ class NotionClient:
                 data = response.json()
                 results = data.get("results", [])
 
+<<<<<<< HEAD
                 for result in tqdm(results, desc="Processing document blocks", unit="block", leave=False):
+=======
+                for result in results:
+>>>>>>> origin/main
                     try:
                         block_type = result.get("type", "")
                         content = self._extract_block_content(result, block_type)
@@ -313,7 +328,11 @@ class NotionClient:
                 data = response.json()
                 results = data.get("results", [])
 
+<<<<<<< HEAD
                 for result in tqdm(results, desc="Processing nested blocks", unit="block", leave=False):
+=======
+                for result in results:
+>>>>>>> origin/main
                     try:
                         block_type = result.get("type", "")
                         content = self._extract_block_content(result, block_type)

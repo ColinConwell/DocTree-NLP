@@ -88,10 +88,15 @@ def main():
         print(f"\nAnalyzing document: {doc.title}")
 
         # Get document content
+<<<<<<< HEAD
         metadata, blocks = client.get_document_content(doc.id)
         print(f"Retrieved {len(blocks)} blocks of content from '{metadata.title}'")
         print(f"Last edited: {metadata.last_edited_time}")
         print(f"Last fetched: {metadata.last_fetched}")
+=======
+        blocks = client.get_document_content(doc.id)
+        print(f"Retrieved {len(blocks)} blocks of content")
+>>>>>>> origin/main
 
         # Analyze document structure
         print("\nAnalyzing document structure...")

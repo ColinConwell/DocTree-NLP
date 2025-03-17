@@ -1,6 +1,9 @@
 # Specific Paths
 **/notion_cache/
+<<<<<<< HEAD
 **/notionlp_data/
+=======
+>>>>>>> origin/main
 
 # IDE cache
 .cursorignore
@@ -15,9 +18,12 @@ CLAUDE.md
 *.pyc
 *.pyo
 
+<<<<<<< HEAD
 # Temp files
 temp/
 
+=======
+>>>>>>> origin/main
 # Jupyter Notebook
 .ipynb_checkpoints
 

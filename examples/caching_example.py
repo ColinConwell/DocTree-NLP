@@ -37,8 +37,13 @@ def main():
     if documents:
         doc = documents[0]
         print(f"Fetching document '{doc.title}'...")
+<<<<<<< HEAD
         metadata, blocks = client.get_document_content(doc.id)
         print(f"Retrieved {len(blocks)} blocks from document '{metadata.title}'")
+=======
+        document, blocks = client.get_document_content(doc.id)
+        print(f"Retrieved {len(blocks)} blocks from document '{document.title}'")
+>>>>>>> origin/main
     
     end_time = time.time()
     print(f"First run took {end_time - start_time:.2f} seconds")
@@ -65,8 +70,13 @@ def main():
     if documents:
         doc = documents[0]
         print(f"Fetching document '{doc.title}'...")
+<<<<<<< HEAD
         metadata, blocks = client.get_document_content(doc.id)
         print(f"Retrieved {len(blocks)} blocks from document '{metadata.title}'")
+=======
+        document, blocks = client.get_document_content(doc.id)
+        print(f"Retrieved {len(blocks)} blocks from document '{document.title}'")
+>>>>>>> origin/main
     
     end_time = time.time()
     print(f"Second run took {end_time - start_time:.2f} seconds")
@@ -77,9 +87,15 @@ def main():
         start_time = time.time()
         doc = documents[0]
         print(f"Fetching document '{doc.title}' without cache...")
+<<<<<<< HEAD
         metadata, blocks = client.get_document_content(doc.id, use_cache=False)
         end_time = time.time()
         print(f"Retrieved {len(blocks)} blocks from document '{metadata.title}'")
+=======
+        document, blocks = client.get_document_content(doc.id, use_cache=False)
+        end_time = time.time()
+        print(f"Retrieved {len(blocks)} blocks from document '{document.title}'")
+>>>>>>> origin/main
         print(f"Force fetching took {end_time - start_time:.2f} seconds")
     
     # Clear specific document from cache

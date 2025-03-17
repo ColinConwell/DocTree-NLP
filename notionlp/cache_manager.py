@@ -11,7 +11,10 @@ import hashlib
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, List
+<<<<<<< HEAD
 from tqdm.auto import tqdm
+=======
+>>>>>>> origin/main
 
 from .structure import Document, Block
 
@@ -188,6 +191,7 @@ class CacheManager:
         try:
             cache_path = self._get_document_list_cache_path()
             
+<<<<<<< HEAD
             # Process document data with progress bar
             doc_data = []
             for doc in tqdm(documents, desc="Preparing document list cache", unit="doc"):
@@ -198,11 +202,25 @@ class CacheManager:
                     'last_edited_time': doc.last_edited_time.isoformat()
                 })
             
+=======
+>>>>>>> origin/main
             cache_data = {
                 'metadata': {
                     'last_fetched': datetime.now().isoformat()
                 },
+<<<<<<< HEAD
                 'documents': doc_data
+=======
+                'documents': [
+                    {
+                        'id': doc.id,
+                        'title': doc.title,
+                        'created_time': doc.created_time.isoformat(),
+                        'last_edited_time': doc.last_edited_time.isoformat()
+                    }
+                    for doc in documents
+                ]
+>>>>>>> origin/main
             }
             
             with open(cache_path, 'w') as f:
@@ -297,8 +315,12 @@ class CacheManager:
     def clear_cache(self):
         """Clear all cache files."""
         try:
+<<<<<<< HEAD
             cache_files = list(self.cache_dir.glob('*.json'))
             for cache_file in tqdm(cache_files, desc="Clearing cache", unit="file"):
+=======
+            for cache_file in self.cache_dir.glob('*.json'):
+>>>>>>> origin/main
                 cache_file.unlink()
             logger.info("Cache cleared")
         except Exception as e:
