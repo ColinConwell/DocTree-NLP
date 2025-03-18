@@ -127,7 +127,7 @@ def test_extract_summary(text_processor):
         assert "first sentence" in summary  # Least important (1 token)
         
         # Test with fewer sentences
-        summary = text_processor.extract_summary("Test text", sentences=2)
+        summary = text_processor.extract_summary("Test text", n_sentences=2)
         
         # Should only have top 2 sentences
         assert len(summary.split("This is the")) == 3  # "This is the" appears twice, plus text before

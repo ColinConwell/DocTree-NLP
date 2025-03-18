@@ -90,13 +90,13 @@ class TextProcessor:
             
         return processed_blocks
 
-    def extract_summary(self, text: str, sentences: int = 3) -> str:
+    def extract_summary(self, text: str, n_sentences: int = 3) -> str:
         """
         Generate a summary of the text.
         
         Args:
             text: Text to summarize
-            sentences: Number of sentences in the summary
+            n_sentences: Number of sentences in the summary
             
         Returns:
             str: Summarized text
@@ -112,13 +112,10 @@ class TextProcessor:
             sentence_scores[sent.text] = score
             
         # Get top sentences
-        summary_sentences = sorted(
-            sentence_scores.items(),
-            key=lambda x: x[1],
-            reverse=True
-        )[:sentences]
+        summary_sentences = sorted(sentence_scores.items(),
+                                   key=lambda x: x[1], reverse=True)
         
-        return " ".join(sent[0] for sent in summary_sentences)
+        return " ".join(sent[0] for sent in summary_sentences[:n_sentences])
     
 def _download_spacy_model(model: str):
     """Download the spaCy model if it doesn't exist."""

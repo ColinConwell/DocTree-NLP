@@ -6,8 +6,7 @@ by summarizing content or correcting spelling and grammar.
 """
 from typing import Dict, Any, Optional
 
-from notionlp import TextProcessor, Block
-from notionlp.parsers import get_api_key
+from notionlp import TextProcessor, Block, get_api_key
 
 try:
     import anthropic

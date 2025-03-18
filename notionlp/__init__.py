@@ -8,8 +8,8 @@ from .api_client import (
     NotionClient, NotionNLPError, AuthenticationError, CacheError
 )
 
-from .api_env import (
-    EnvLoader, get_env, get_required_env, get_api_key
+from .env_loader import (
+    EnvLoader, get_env, get_required_env, get_api_key, find_notion_token
 )
 
 from .structure import (
@@ -41,6 +41,7 @@ ENV_HELPERS = [
     "get_env",
     "get_required_env",
     "get_api_key",
+    "find_notion_token",
 ]
 
 CACHE_CONFIG = [

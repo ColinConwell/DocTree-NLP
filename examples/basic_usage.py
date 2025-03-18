@@ -1,26 +1,26 @@
 """
 Example usage of the Notion NLP library with caching and rate limiting.
 """
-from notionlp import NotionClient, TextProcessor, Hierarchy, Tagger, DEFAULT_CACHE_DIR
-from notionlp.parsers import get_env
+from notionlp import NotionClient, TextProcessor, Hierarchy, Tagger, DEFAULT_CACHE_DIR, get_env
 from notionlp.structure import AuthenticationError
 
 def main():
     try:
-        # Get token from environment variable
-        notion_token = get_env('NOTION_API_TOKEN')
-        if not notion_token:
-            print("Error: NOTION_API_TOKEN environment variable not found")
-            return
-
-        # Initialize client with caching and rate limiting
+        # Using auto token discovery (recommended approach)
         client = NotionClient(
-            token=notion_token,
-            cache_enabled=True,                 # Enable caching
-            cache_dir=DEFAULT_CACHE_DIR,        # Use default cache directory
-            max_cache_age_days=1,               # Cache valid for 1 day
-            rate_limit=3                        # Limit to 3 requests per second (Notion API limit)
+            token="auto",                      # Auto-discover token
+            cache_enabled=True,                # Enable caching
+            cache_dir=DEFAULT_CACHE_DIR,       # Use default cache directory
+            max_cache_age_days=1,              # Cache valid for 1 day
+            rate_limit=3                       # Limit to 3 requests per second (Notion API limit)
         )
+        
+        # Alternative approach using get_env for demonstration:
+        # notion_token = get_env('NOTION_API_TOKEN')
+        # if not notion_token:
+        #     print("Error: NOTION_API_TOKEN environment variable not found")
+        #     return
+        # client = NotionClient(token=notion_token, ...)
 
         # Verify authentication
         if not client.authenticate():

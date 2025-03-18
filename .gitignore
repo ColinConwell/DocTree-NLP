@@ -1,4 +1,6 @@
 # Specific Paths
+.env.notion
+dev.ipynb
 **/notion_cache/
 **/notionlp_data/
 
@@ -8,6 +10,10 @@ CLAUDE.md
 .vscode/
 .jupyter/
 .pretzel/
+
+# env + secrets
+.env.*
+.secrets
 
 # Checkpoints / weights
 *.pt
