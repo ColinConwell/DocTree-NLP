@@ -1,13 +1,13 @@
-# NotioNLPToolkit
+# DocTree NLP Toolkit
 
-A python toolkit for processing Notion documents with NLP capabilities and hierarchical organization, heavily inspired by [dario-github/notion-nlp](https://github.com/dario-github/notion-nlp).
+A Python toolkit for processing document trees with NLP capabilities and hierarchical organization. Originally designed for Notion documents but now expanded to support multiple document sources including Obsidian vaults and local markdown files.
 
 ## Quick Start
 
-1. Install the NotionNLPToolkit package:
+1. Install the DocTree NLP package:
 
 ```bash
-pip install git+https://github.com/ColinConwell/NotionNLPToolkit.git
+pip install git+https://github.com/ColinConwell/DocTree-NLP.git
 ```
 
 2. Set up your Notion API token, add the integration to your target Notion document(s), and add your token to a .env file or other environment variable.
@@ -20,7 +20,7 @@ load_dotenv("/path/to/your/.env")
 3. Initialize the NotionClient with your Notion API token.
 
 ```python
-from notionlp import NotionClient
+from doctree_nlp import NotionClient
 
 # Option 1: Provide token explicitly
 client = NotionClient("YOUR_NOTION_API_TOKEN")
@@ -176,7 +176,7 @@ client = NotionClient("your-notion-api-token")
 NotioNLPToolkit provides utilities for handling environment variables in a user-friendly way:
 
 ```python
-from notionlp import get_env, get_required_env, get_api_key, EnvLoader
+from doctree_nlp.env_loader import get_env, get_required_env, get_api_key, EnvLoader
 
 # Get an optional environment variable with a default
 db_host = get_env("DATABASE_HOST", "localhost")
@@ -192,10 +192,10 @@ These functions search environment variables, `.env` files, and can even prompt 
 
 ### Global Configuration System
 
-NotioNLPToolkit includes a flexible configuration system that allows you to customize default behavior throughout the toolkit:
+DocTree NLP includes a flexible configuration system that allows you to customize default behavior throughout the toolkit:
 
 ```python
-from notionlp import (
+from doctree_nlp.defaults import (
     get_defaults, get_default, set_default, update_defaults,
     load_defaults_from_env, load_defaults_from_file, save_defaults_to_file
 )
@@ -223,7 +223,7 @@ update_defaults({
 })
 
 # Load configuration from environment variables
-# NOTIONLP_CACHE_DIRECTORY=my_cache_dir python my_script.py
+# DOCTREE_CACHE_DIRECTORY=my_cache_dir python my_script.py
 load_defaults_from_env()
 
 # Save/load configuration to/from files
@@ -235,7 +235,7 @@ The configuration system includes settings for caching, API access, document han
 
 ## Document Structure and Architecture
 
-The NotioNLPToolkit provides a comprehensive document structure model centered around the `Document` class. This structure has been designed to make working with document content more intuitive.
+The DocTree NLP toolkit provides a comprehensive document structure model centered around the `Document` class. This structure has been designed to make working with document content more intuitive.
 
 ### Core Classes
 
@@ -252,7 +252,7 @@ The NotioNLPToolkit provides a comprehensive document structure model centered a
 Documents contain blocks and can build a tree structure for hierarchical navigation:
 
 ```python
-from notionlp import NotionClient
+from doctree_nlp import NotionClient
 
 # Initialize client
 client = NotionClient(token="auto")
@@ -289,7 +289,7 @@ example_doc = Document.load_example("meeting_notes")
 For Jupyter notebook users, there's built-in rich display support:
 
 ```python
-from notionlp import NotionClient, display_document, display_document_tree, display_document_table
+from doctree_nlp import NotionClient, display_document, display_document_tree, display_document_table
 
 # Get a document
 client = NotionClient(token="auto")
@@ -308,7 +308,8 @@ The document will render as rich HTML in the notebook, with collapsible tree vie
 The legacy document parsing functions are still supported:
 
 ```python
-from notionlp import NotionClient, export_to_markdown, export_to_rst, doc_to_dict
+from doctree_nlp import NotionClient
+from doctree_nlp.parsers import export_to_markdown, export_to_rst, doc_to_dict
 
 # Initialize client
 client = NotionClient(os.environ['NOTION_API_TOKEN'])
@@ -365,7 +366,7 @@ For working with large documents or many documents at once, NotioNLPToolkit prov
 The `LazyDocument` class implements lazy loading, only fetching content when it's actually needed:
 
 ```python
-from notionlp import NotionClient, create_lazy_document, LazyDocumentCollection
+from doctree_nlp import NotionClient, create_lazy_document, LazyDocumentCollection
 
 # Initialize client
 client = NotionClient(token="auto")
@@ -397,7 +398,7 @@ collection.clear_loaded_content(keep_metadata=True)
 For very large documents, you can use windowing to display and navigate content efficiently:
 
 ```python
-from notionlp import NotionClient, DocumentWindower, TreeWindower
+from doctree_nlp import NotionClient, DocumentWindower, TreeWindower
 
 # Initialize client and get a document
 client = NotionClient(token="auto")
@@ -451,19 +452,20 @@ python -m pytest tests/
 ### Project Structure
 
 ```
-notionlp/
+doctree_nlp/
 ├── __init__.py           # Main package exports
-├── api_client.py         # Notion API client
+├── api_client.py         # API clients (Notion, Obsidian, Local)
 ├── api_env.py            # Environment and API handling
-├── cache_manager.py      # Document caching system
-├── document_windowing.py # Windowing for large documents
+├── caching.py            # Document caching system
+├── defaults.py           # Default configuration system
 ├── env_loader.py         # Environment variables handler
 ├── lazy_document.py      # Lazy loading implementation
 ├── notebook.py           # Jupyter notebook integration
 ├── parsers.py            # Document parsing utilities
 ├── rate_limiter.py       # API rate limiting
 ├── structure.py          # Core models, document tree, tagging
-└── text_processor.py     # NLP capabilities
+├── text_processor.py     # NLP capabilities
+└── windowing.py          # Windowing for large documents
 ```
 
 ### Architecture Documentation

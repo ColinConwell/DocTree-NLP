@@ -1,15 +1,15 @@
 """
-NotioNLPToolkit: A toolkit for natural language processing of Notion documents.
+DocTree NLP: A toolkit for processing document trees with NLP capabilities.
 
 This package provides tools for retrieving, caching, parsing, and analyzing
-content from Notion documents using the official Notion API.
+content from various document sources including Notion, Obsidian, and local files.
 """
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
 from .api_client import (
     NotionClient, ObsidianClient, LocalSource, 
-    NotionNLPError, AuthenticationError, CacheError
+    NotionNLPError, DocTreeError, AuthenticationError, CacheError
 )
 
 from .env_loader import (
@@ -92,7 +92,8 @@ DEFAULTS_CONFIG = [
 ]
 
 ERRORS = [
-    "NotionNLPError",
+    "NotionNLPError",  # Will be renamed to DocTreeError in a future release
+    "DocTreeError",    # Preferred name for new code
     "AuthenticationError",
     "CacheError"
 ]

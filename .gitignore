@@ -21,9 +21,12 @@ CLAUDE.md
 *.pyc
 *.pyo
 
-# Temp files
-temp/
-
+# Temp files / cache
+**/temp/
+**/.temp/
+**/cache/
+**/.cache/
+**/_cache/
 # Jupyter Notebook
 .ipynb_checkpoints
 

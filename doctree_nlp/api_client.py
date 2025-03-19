@@ -885,8 +885,10 @@ class NotionClient:
 
 class NotionNLPError(Exception):
     """Base exception for Notion NLP library."""
-
     pass
+
+# Alias for future transition
+DocTreeError = NotionNLPError
 
 
 class AuthenticationError(NotionNLPError):

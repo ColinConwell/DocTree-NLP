@@ -1,7 +1,7 @@
 [project]
-name = "notionlp"
+name = "doctree-nlp"
 version = "0.1.0"
-description = "A Python library for processing Notion documents with NLP both classic and modern"
+description = "A Python library for processing document trees with NLP capabilities"
 authors = [
     {name = "Colin Conwell", email = "colinconwell@gmail.com"},
 ]

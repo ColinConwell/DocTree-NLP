@@ -1,13 +1,14 @@
 """
-Streamlit demo for Notion NLP Library with caching and rate limiting.
+Streamlit demo for DocTree NLP Library with caching and rate limiting.
 """
 import os
 import logging
 import traceback
 import streamlit as st
 import time
-from notionlp import NotionClient, TextProcessor, Hierarchy, Tagger, DEFAULT_CACHE_DIR
-from notionlp.structure import AuthenticationError, NotionNLPError, CacheError
+from doctree_nlp import NotionClient, TextProcessor, Hierarchy, Tagger
+from doctree_nlp.defaults import get_default
+from doctree_nlp.api_client import AuthenticationError, NotionNLPError, CacheError
 
 # Configure logging with more detail
 logging.basicConfig(
@@ -42,9 +43,9 @@ try:
         logger.info("Session state initialized")
 
     # Title and description
-    st.title("Notion NLP Library Demo")
+    st.title("DocTree NLP Library Demo")
     st.markdown("""
-    This demo showcases the core functionalities of the Notion NLP library:
+    This demo showcases the core functionalities of the DocTree NLP library:
     - Document listing and content retrieval with caching and rate limiting
     - Hierarchical document structure analysis
     - Natural Language Processing capabilities
@@ -59,14 +60,14 @@ try:
             st.session_state.notion_client = NotionClient(
                 token=notion_token,
                 cache_enabled=st.session_state.cache_settings['enabled'],
-                cache_dir=DEFAULT_CACHE_DIR,
+                cache_dir=get_default('cache.directory', 'cache'),
                 max_cache_age_days=st.session_state.cache_settings['max_age_days'],
                 rate_limit=st.session_state.cache_settings['rate_limit']
             )
             st.session_state.text_processor = TextProcessor()
             st.session_state.tagger = Tagger()
             st.session_state.initialized = True
-            logger.info("Successfully initialized Notion NLP clients")
+            logger.info("Successfully initialized DocTree NLP clients")
         except Exception as e:
             st.error(f"Failed to initialize clients: {str(e)}")
             logger.error(f"Client initialization error: {str(e)}")

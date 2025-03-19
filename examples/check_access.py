@@ -4,10 +4,10 @@ Demonstrates the use of caching and rate limiting features.
 """
 import os
 import time
-from notionlp.api_client import (
+from doctree_nlp.api_client import (
     NotionClient, AuthenticationError, NotionNLPError, CacheError
 )
-from notionlp.caching import DEFAULT_CACHE_DIR
+from doctree_nlp.defaults import get_default
 
 def main():
     try:
@@ -22,7 +22,7 @@ def main():
         client = NotionClient(
             token=notion_token,
             cache_enabled=True,                 # Enable caching
-            cache_dir=DEFAULT_CACHE_DIR,        # Use default cache directory
+            cache_dir=get_default('cache.directory', 'cache'),  # Use default cache directory from defaults
             max_cache_age_days=1,               # Cache valid for 1 day
             rate_limit=3                        # Limit to 3 requests per second (Notion API limit)
         )

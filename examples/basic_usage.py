@@ -1,15 +1,15 @@
 """
-Example usage of the Notion NLP library with caching and rate limiting.
+Example usage of the DocTree NLP library with caching and rate limiting.
 """
-from notionlp import (
+from doctree_nlp import (
     NotionClient, 
     TextProcessor, 
     Tagger, 
     Document, 
-    get_default,
-    get_env
 )
-from notionlp.structure import AuthenticationError
+from doctree_nlp.defaults import get_default
+from doctree_nlp.env_loader import get_env
+from doctree_nlp.api_client import AuthenticationError
 
 def main():
     try:

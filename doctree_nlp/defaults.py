@@ -1,5 +1,5 @@
 """
-Default configuration management for NotioNLPToolkit.
+Default configuration management for DocTree NLP.
 
 This module provides a centralized configuration system for managing default settings
 across the toolkit, with support for loading from environment files or config files.
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 class DefaultsManager:
     """
-    Manages default configuration settings for NotioNLPToolkit.
+    Manages default configuration settings for DocTree NLP.
     
     This class provides a central configuration system with dictionary-like access,
     the ability to load settings from environment variables, JSON, or YAML files.
@@ -146,7 +146,7 @@ class DefaultsManager:
         import copy
         return copy.deepcopy(self._defaults)
     
-    def load_env(self, env_file: Optional[str] = None, prefix: str = "NOTIONLP_") -> None:
+    def load_env(self, env_file: Optional[str] = None, prefix: str = "DOCTREE_") -> None:
         """
         Load configuration from environment variables.
         
