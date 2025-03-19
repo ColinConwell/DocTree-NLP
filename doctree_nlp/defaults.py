@@ -30,8 +30,8 @@ class DefaultsManager:
             "cache": {
                 "directory": "cache",
                 "sources": {
-                    "notion": "notion",
                     "internal": "internal",
+                    "notion": "notion",
                     "obsidian": "obsidian",
                     "local": "local",
                 },

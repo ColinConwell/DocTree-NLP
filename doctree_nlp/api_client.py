@@ -1067,28 +1067,42 @@ class LocalSource:
     
     def __init__(
         self,
-        directory_path: str,
-        file_pattern: str = "**/*.md",
+        directory_path: str = None,
+        file_pattern: str = None,
         cache_enabled: bool = None,
         cache_dir: str = None,
         max_cache_age_days: Optional[int] = None,
+        file_types: List[str] = None,
+        source_as_single_doctree: bool = False,
+        encoding: str = None,
     ):
         """
         Initialize the local source client.
         
         Args:
-            directory_path: Path to the directory containing markdown files
-            file_pattern: Glob pattern to match files (default: all markdown files)
+            directory_path: Path to the directory containing markdown files. If None, user will be prompted.
+            file_pattern: Glob pattern to match files (default from settings)
             cache_enabled: Whether to use caching
             cache_dir: Directory to store cache files
             max_cache_age_days: Maximum age of cache entries in days (None for no expiry)
+            file_types: List of file extensions to process (default: [".md"])
+            source_as_single_doctree: If True, all files are treated as a single document with hierarchy based on folders
+            encoding: File encoding to use when reading files
         """
         # Use provided values or defaults
-        self.directory_path = Path(directory_path)
-        self.file_pattern = file_pattern
+        self.file_pattern = file_pattern if file_pattern is not None else get_default('local.default_pattern', "**/*.md")
         self.cache_enabled = cache_enabled if cache_enabled is not None else get_default('cache.enabled', True)
         cache_dir = cache_dir if cache_dir is not None else get_default('cache.directory', 'cache')
         max_cache_age_days = max_cache_age_days if max_cache_age_days is not None else get_default('cache.max_age_days', None)
+        self.encoding = encoding if encoding is not None else get_default('local.encoding', 'utf-8')
+        self.file_types = file_types if file_types is not None else [".md"]
+        self.source_as_single_doctree = source_as_single_doctree
+        
+        # If no directory path provided, prompt the user
+        if directory_path is None:
+            directory_path = self._prompt_directory_path()
+        
+        self.directory_path = Path(directory_path)
         
         # Validate directory path
         if not self.directory_path.exists() or not self.directory_path.is_dir():
@@ -1101,14 +1115,78 @@ class LocalSource:
                 api_token=f"local-{dir_hash}",
                 cache_dir=cache_dir,
                 max_age_days=max_cache_age_days,
-                source_dir=get_default('cache.sources.internal', 'internal'),  # Use internal cache source
+                source_dir=get_default('cache.sources.local', 'local'),  # Use local cache source
             )
             
         logger.info(f"Initialized local source client for directory: {self.directory_path}")
     
+    def _prompt_directory_path(self) -> str:
+        """
+        Prompt the user for a directory path.
+        
+        Returns:
+            str: Directory path provided by the user
+        """
+        try:
+            # First, try to use IPython widgets if in a Jupyter environment
+            from IPython.display import display
+            import ipywidgets as widgets
+            
+            # Create a text input widget
+            text = widgets.Text(
+                value='',
+                placeholder='Enter directory path',
+                description='Directory:',
+                disabled=False
+            )
+            
+            # Create a button widget
+            button = widgets.Button(
+                description='Confirm',
+                disabled=False,
+                button_style='success',
+                tooltip='Click to confirm'
+            )
+            
+            # Store the input value
+            result = {'path': None}
+            
+            def on_button_clicked(b):
+                result['path'] = text.value
+                
+            button.on_click(on_button_clicked)
+            
+            # Display the widgets
+            display(text)
+            display(button)
+            
+            # Wait for user input
+            while result['path'] is None:
+                import time
+                time.sleep(0.1)
+                
+            return result['path']
+            
+        except (ImportError, ModuleNotFoundError):
+            # Fall back to console input if not in Jupyter
+            return input("Enter directory path for documents: ")
+    
+    def _get_file_pattern(self) -> str:
+        """Get the appropriate glob pattern based on file types."""
+        if self.file_pattern:
+            return self.file_pattern
+            
+        patterns = []
+        for ext in self.file_types:
+            if not ext.startswith('.'):
+                ext = f".{ext}"
+            patterns.append(f"**/*{ext}")
+            
+        return "{" + ",".join(patterns) + "}" if len(patterns) > 1 else patterns[0]
+    
     def list_documents(self, use_cache: bool = None) -> List[Document]:
         """
-        List available markdown documents in the directory.
+        List available documents in the directory.
         
         Args:
             use_cache: Whether to use cache for this request (overrides instance setting)
@@ -1116,7 +1194,6 @@ class LocalSource:
         Returns:
             List[Document]: List of available documents
         """
-        # Placeholder implementation - will be expanded in future
         should_use_cache = self.cache_enabled if use_cache is None else use_cache
         
         # Check cache first if enabled
@@ -1126,26 +1203,50 @@ class LocalSource:
                 logger.debug("Using cached document list")
                 return cached_docs
         
-        # Find all matching files
-        files = list(self.directory_path.glob(self.file_pattern))
+        # Find all matching files using either the pattern or file types
+        files = list(self.directory_path.glob(self._get_file_pattern()))
         documents = []
         
-        for file in tqdm(files, desc="Processing local files", unit="file"):
-            # Get file stats
-            stats = file.stat()
+        # If treating all files as a single document tree
+        if self.source_as_single_doctree:
+            # Create one document representing the entire directory
+            stats = self.directory_path.stat()
             created_time = datetime.fromtimestamp(stats.st_ctime)
-            modified_time = datetime.fromtimestamp(stats.st_mtime)
             
-            # Create document
+            # Find the most recent modification time among all files
+            most_recent_time = created_time
+            for file in files:
+                modified_time = datetime.fromtimestamp(file.stat().st_mtime)
+                if modified_time > most_recent_time:
+                    most_recent_time = modified_time
+            
             doc = Document(
-                id=str(file.relative_to(self.directory_path)),
-                title=file.stem,  # Use filename without extension as title
+                id="_combined_doctree",
+                title=self.directory_path.name,
                 created_time=created_time,
-                last_edited_time=modified_time,
+                last_edited_time=most_recent_time,
                 last_fetched=datetime.now(),
                 source_id=f"local-{self.directory_path.name}"
             )
             documents.append(doc)
+        else:
+            # Create a document for each file
+            for file in tqdm(files, desc="Processing local files", unit="file"):
+                # Get file stats
+                stats = file.stat()
+                created_time = datetime.fromtimestamp(stats.st_ctime)
+                modified_time = datetime.fromtimestamp(stats.st_mtime)
+                
+                # Create document
+                doc = Document(
+                    id=str(file.relative_to(self.directory_path)),
+                    title=file.stem,  # Use filename without extension as title
+                    created_time=created_time,
+                    last_edited_time=modified_time,
+                    last_fetched=datetime.now(),
+                    source_id=f"local-{self.directory_path.name}"
+                )
+                documents.append(doc)
         
         # Update cache if enabled
         if should_use_cache and hasattr(self, "cache_manager") and documents:
@@ -1164,7 +1265,6 @@ class LocalSource:
         Returns:
             Document: A Document instance with metadata and blocks
         """
-        # This is a placeholder implementation
         metadata, blocks = self.get_document_content(document_id, use_cache)
         
         if metadata:
@@ -1175,14 +1275,18 @@ class LocalSource:
                 last_edited_time=metadata.last_edited_time,
                 last_fetched=metadata.last_fetched,
                 etag=metadata.etag,
+                source_id=metadata.source_id,
                 blocks=blocks
             )
+            # Build the document tree
+            if blocks:
+                document.build_tree()
             return document
         else:
             # Return an empty document if metadata couldn't be fetched
             return Document(
                 id=document_id,
-                title=Path(document_id).stem,
+                title=Path(document_id).stem if document_id != "_combined_doctree" else self.directory_path.name,
                 created_time=datetime.now(),
                 last_edited_time=datetime.now(),
                 last_fetched=datetime.now(),
@@ -1202,18 +1306,426 @@ class LocalSource:
         Returns:
             Tuple[Document, List[Block]]: A tuple containing metadata and blocks
         """
-        # Implementation to be expanded in future
-        # For now, return empty metadata and blocks list
-        logger.info(f"Local source content fetching not yet implemented for document: {document_id}")
+        should_use_cache = self.cache_enabled if use_cache is None else use_cache
         
-        # Create basic document metadata
+        # Check if we're using the special combined document ID
+        if document_id == "_combined_doctree" and self.source_as_single_doctree:
+            return self._get_combined_content(use_cache=should_use_cache)
+        
+        # Check cache first if enabled
+        if should_use_cache and hasattr(self, "cache_manager"):
+            # Try to get from cache based on document_id and modification time
+            file_path = self.directory_path / document_id
+            if file_path.exists():
+                modified_time = datetime.fromtimestamp(file_path.stat().st_mtime)
+                
+                if self.cache_manager.is_document_cached(document_id, modified_time):
+                    cached_doc, cached_blocks = self.cache_manager.get_cached_document(document_id)
+                    if cached_doc and cached_blocks:
+                        logger.debug(f"Using cached content for document {document_id}")
+                        return cached_doc, cached_blocks
+        
+        # File path for the document
+        file_path = self.directory_path / document_id
+        
+        # Check if file exists
+        if not file_path.exists() or not file_path.is_file():
+            logger.error(f"Document file not found: {file_path}")
+            return None, []
+        
+        # Get file stats for metadata
+        stats = file_path.stat()
+        created_time = datetime.fromtimestamp(stats.st_ctime)
+        modified_time = datetime.fromtimestamp(stats.st_mtime)
+        
+        # Create document metadata
         doc = Document(
             id=document_id,
-            title=Path(document_id).stem,
-            created_time=datetime.now(),
-            last_edited_time=datetime.now(),
+            title=file_path.stem,
+            created_time=created_time,
+            last_edited_time=modified_time,
             last_fetched=datetime.now(),
             source_id=f"local-{self.directory_path.name}"
         )
         
-        return doc, []
+        # Parse file content into blocks
+        try:
+            blocks = self._parse_file_to_blocks(file_path)
+            
+            # Update cache if enabled
+            if should_use_cache and hasattr(self, "cache_manager"):
+                self.cache_manager.cache_document(document_id, doc, blocks)
+                
+            return doc, blocks
+            
+        except Exception as e:
+            logger.error(f"Error parsing document {document_id}: {str(e)}")
+            return doc, []
+    
+    def _parse_file_to_blocks(self, file_path: Path) -> List[Block]:
+        """
+        Parse a file into blocks based on its type.
+        
+        Args:
+            file_path: Path to the file to parse
+            
+        Returns:
+            List[Block]: List of parsed blocks
+        """
+        # Determine file type from extension
+        file_ext = file_path.suffix.lower()
+        
+        # Read file content
+        try:
+            with open(file_path, 'r', encoding=self.encoding) as f:
+                content = f.read()
+        except UnicodeDecodeError:
+            # Try with different encoding as fallback
+            try:
+                with open(file_path, 'r', encoding='latin-1') as f:
+                    content = f.read()
+                logger.warning(f"Used fallback encoding for {file_path}")
+            except Exception as e:
+                logger.error(f"Failed to read file {file_path}: {str(e)}")
+                return []
+        
+        # Parse content based on file type
+        if file_ext == '.md':
+            return self._parse_markdown(content, file_path)
+        elif file_ext == '.txt':
+            return self._parse_text(content, file_path)
+        else:
+            # Default handling for unknown types
+            return self._parse_text(content, file_path)
+    
+    def _parse_markdown(self, content: str, file_path: Path) -> List[Block]:
+        """
+        Parse markdown content into blocks.
+        
+        Args:
+            content: The markdown content to parse
+            file_path: Path to the source file (for block IDs)
+            
+        Returns:
+            List[Block]: List of parsed blocks
+        """
+        blocks = []
+        lines = content.split('\n')
+        current_block = {'type': 'paragraph', 'content': [], 'indent': 0}
+        block_id_counter = 1
+        
+        for line in lines:
+            # Skip empty lines that are not part of a code block
+            if not line.strip() and current_block['type'] != 'code':
+                if current_block['content']:
+                    # Finish the current block
+                    blocks.append(Block(
+                        id=f"{file_path.stem}_{block_id_counter}",
+                        type=current_block['type'],
+                        content='\n'.join(current_block['content']).strip(),
+                        indent_level=current_block['indent']
+                    ))
+                    block_id_counter += 1
+                    current_block = {'type': 'paragraph', 'content': [], 'indent': 0}
+                continue
+                
+            # Check for headings (ATX style: # Heading)
+            heading_match = re.match(r'^(#{1,6})\s+(.+)$'$', line)
+            if heading_match:
+                # Finish the current block if any
+                if current_block['content']:
+                    blocks.append(Block(
+                        id=f"{file_path.stem}_{block_id_counter}",
+                        type=current_block['type'],
+                        content='\n'.join(current_block['content']).strip(),
+                        indent_level=current_block['indent']
+                    ))
+                    block_id_counter += 1
+                
+                # Create heading block
+                heading_level = len(heading_match.group(1))
+                blocks.append(Block(
+                    id=f"{file_path.stem}_{block_id_counter}",
+                    type=f"heading_{heading_level}",
+                    content=heading_match.group(2).strip(),
+                    indent_level=0
+                ))
+                block_id_counter += 1
+                current_block = {'type': 'paragraph', 'content': [], 'indent': 0}
+                continue
+                
+            # Check for bullet lists
+            bullet_match = re.match(r'^(\s*)[-*+]\s+(.+)$'$', line)
+            if bullet_match:
+                # Finish the current block if it's not a bullet list or has different indentation
+                indent_level = len(bullet_match.group(1)) // 2
+                if (current_block['type'] != 'bulleted_list_item' or 
+                    current_block['indent'] != indent_level) and current_block['content']:
+                    blocks.append(Block(
+                        id=f"{file_path.stem}_{block_id_counter}",
+                        type=current_block['type'],
+                        content='\n'.join(current_block['content']).strip(),
+                        indent_level=current_block['indent']
+                    ))
+                    block_id_counter += 1
+                    
+                # Start new bullet list item or continue existing one
+                if current_block['type'] != 'bulleted_list_item' or current_block['indent'] != indent_level:
+                    current_block = {'type': 'bulleted_list_item', 'content': [bullet_match.group(2)], 'indent': indent_level}
+                else:
+                    current_block['content'].append(bullet_match.group(2))
+                continue
+                
+            # Check for numbered lists
+            number_match = re.match(r'^(\s*)(\d+)[\.\)]\s+(.+)$'$', line)
+            if number_match:
+                # Finish the current block if it's not a numbered list or has different indentation
+                indent_level = len(number_match.group(1)) // 2
+                if (current_block['type'] != 'numbered_list_item' or 
+                    current_block['indent'] != indent_level) and current_block['content']:
+                    blocks.append(Block(
+                        id=f"{file_path.stem}_{block_id_counter}",
+                        type=current_block['type'],
+                        content='\n'.join(current_block['content']).strip(),
+                        indent_level=current_block['indent']
+                    ))
+                    block_id_counter += 1
+                    
+                # Start new numbered list item or continue existing one
+                if current_block['type'] != 'numbered_list_item' or current_block['indent'] != indent_level:
+                    current_block = {'type': 'numbered_list_item', 'content': [number_match.group(3)], 'indent': indent_level}
+                else:
+                    current_block['content'].append(number_match.group(3))
+                continue
+                
+            # Check for code blocks (```lang)
+            code_start_match = re.match(r'^```(\w*)$'$', line)
+            if code_start_match and current_block['type'] != 'code':
+                # Finish the current block if any
+                if current_block['content']:
+                    blocks.append(Block(
+                        id=f"{file_path.stem}_{block_id_counter}",
+                        type=current_block['type'],
+                        content='\n'.join(current_block['content']).strip(),
+                        indent_level=current_block['indent']
+                    ))
+                    block_id_counter += 1
+                
+                # Start code block
+                lang = code_start_match.group(1) or "text"
+                current_block = {'type': 'code', 'content': [lang], 'indent': 0}
+                continue
+            
+            # Check for code block end
+            if line.strip() == '```' and current_block['type'] == 'code':
+                # Finish the code block
+                blocks.append(Block(
+                    id=f"{file_path.stem}_{block_id_counter}",
+                    type='code',
+                    content='\n'.join(current_block['content']),
+                    indent_level=0
+                ))
+                block_id_counter += 1
+                current_block = {'type': 'paragraph', 'content': [], 'indent': 0}
+                continue
+                
+            # Check for block quotes
+            quote_match = re.match(r'^>\s*(.*)$'$', line)
+            if quote_match:
+                # Finish the current block if it's not a quote
+                if current_block['type'] != 'quote' and current_block['content']:
+                    blocks.append(Block(
+                        id=f"{file_path.stem}_{block_id_counter}",
+                        type=current_block['type'],
+                        content='\n'.join(current_block['content']).strip(),
+                        indent_level=current_block['indent']
+                    ))
+                    block_id_counter += 1
+                    
+                # Start or continue quote block
+                if current_block['type'] != 'quote':
+                    current_block = {'type': 'quote', 'content': [quote_match.group(1)], 'indent': 0}
+                else:
+                    current_block['content'].append(quote_match.group(1))
+                continue
+                
+            # Check for horizontal rules
+            if re.match(r'^(---|\*\*\*|___)\s*$'$', line):
+                # Finish the current block if any
+                if current_block['content']:
+                    blocks.append(Block(
+                        id=f"{file_path.stem}_{block_id_counter}",
+                        type=current_block['type'],
+                        content='\n'.join(current_block['content']).strip(),
+                        indent_level=current_block['indent']
+                    ))
+                    block_id_counter += 1
+                
+                # Add divider block
+                blocks.append(Block(
+                    id=f"{file_path.stem}_{block_id_counter}",
+                    type='divider',
+                    content='',
+                    indent_level=0
+                ))
+                block_id_counter += 1
+                current_block = {'type': 'paragraph', 'content': [], 'indent': 0}
+                continue
+                
+            # Default case: add to current block
+            current_block['content'].append(line)
+            
+        # Add the final block if there is one
+        if current_block['content']:
+            blocks.append(Block(
+                id=f"{file_path.stem}_{block_id_counter}",
+                type=current_block['type'],
+                content='\n'.join(current_block['content']).strip(),
+                indent_level=current_block['indent']
+            ))
+        
+        return blocks
+    
+    def _parse_text(self, content: str, file_path: Path) -> List[Block]:
+        """
+        Parse plain text content into blocks.
+        
+        Args:
+            content: The text content to parse
+            file_path: Path to the source file (for block IDs)
+            
+        Returns:
+            List[Block]: List of parsed blocks
+        """
+        blocks = []
+        paragraphs = re.split(r'\n\s*\n', content)
+        
+        for i, paragraph in enumerate(paragraphs):
+            if paragraph.strip():
+                blocks.append(Block(
+                    id=f"{file_path.stem}_{i+1}",
+                    type='paragraph',
+                    content=paragraph.strip(),
+                    indent_level=0
+                ))
+        
+        return blocks
+    
+    def _get_combined_content(self, use_cache: bool = None) -> Tuple[Document, List[Block]]:
+        """
+        Get content for all files combined into a single document tree.
+        
+        Args:
+            use_cache: Whether to use cache for this request
+            
+        Returns:
+            Tuple[Document, List[Block]]: Document metadata and combined blocks
+        """
+        should_use_cache = self.cache_enabled if use_cache is None else use_cache
+        
+        # Check cache first if enabled
+        if should_use_cache and hasattr(self, "cache_manager"):
+            cached_doc, cached_blocks = self.cache_manager.get_cached_document("_combined_doctree")
+            if cached_doc and cached_blocks:
+                logger.debug("Using cached combined document")
+                return cached_doc, cached_blocks
+                
+        # Get metadata for the combined document
+        stats = self.directory_path.stat()
+        created_time = datetime.fromtimestamp(stats.st_ctime)
+        
+        # Find all matching files
+        files = list(self.directory_path.glob(self._get_file_pattern()))
+        
+        # Find the most recent modification time among all files
+        most_recent_time = created_time
+        for file in files:
+            modified_time = datetime.fromtimestamp(file.stat().st_mtime)
+            if modified_time > most_recent_time:
+                most_recent_time = modified_time
+        
+        # Create document metadata
+        doc = Document(
+            id="_combined_doctree",
+            title=self.directory_path.name,
+            created_time=created_time,
+            last_edited_time=most_recent_time,
+            last_fetched=datetime.now(),
+            source_id=f"local-{self.directory_path.name}"
+        )
+        
+        # Start with a root heading for the directory
+        all_blocks = [
+            Block(
+                id=f"root_heading",
+                type="heading_1",
+                content=self.directory_path.name,
+                indent_level=0
+            )
+        ]
+        
+        # Sort files to process subdirectories in order
+        sorted_files = sorted(files, key=lambda f: str(f.relative_to(self.directory_path)))
+        
+        # Track current directory structure to create hierarchical headings
+        current_path_parts = []
+        
+        # Process each file
+        for file in tqdm(sorted_files, desc="Building combined document tree", unit="file"):
+            relative_path = file.relative_to(self.directory_path)
+            path_parts = list(relative_path.parts)[:-1]  # Exclude the filename
+            
+            # Check if we've moved to a new directory in the hierarchy
+            common_prefix_len = 0
+            for i, (current, new) in enumerate(zip(current_path_parts, path_parts)):
+                if current == new:
+                    common_prefix_len = i + 1
+                else:
+                    break
+            
+            # Add directory headings for new directories in the path
+            if len(path_parts) > common_prefix_len:
+                for i, dir_name in enumerate(path_parts[common_prefix_len:]):
+                    heading_level = min(2 + common_prefix_len + i, 6)  # Limit to h6
+                    all_blocks.append(Block(
+                        id=f"dir_{'_'.join(path_parts[:common_prefix_len+i+1])}",
+                        type=f"heading_{heading_level}",
+                        content=dir_name,
+                        indent_level=0
+                    ))
+            
+            # Update current path
+            current_path_parts = path_parts
+            
+            # Add file heading
+            all_blocks.append(Block(
+                id=f"file_{str(relative_path).replace('/', '_')}",
+                type="heading_2" if not path_parts else f"heading_{min(len(path_parts) + 3, 6)}",
+                content=file.stem,
+                indent_level=0
+            ))
+            
+            # Parse file content and add its blocks
+            try:
+                file_blocks = self._parse_file_to_blocks(file)
+                
+                # Adjust block indent levels to fit the hierarchy
+                base_indent = 1  # Start with indent 1 for file content
+                for block in file_blocks:
+                    block.indent_level += base_indent
+                    all_blocks.append(block)
+            except Exception as e:
+                logger.error(f"Error parsing file {file}: {str(e)}")
+                # Add error block
+                all_blocks.append(Block(
+                    id=f"error_{str(relative_path).replace('/', '_')}",
+                    type="paragraph",
+                    content=f"Error parsing file: {str(e)}",
+                    indent_level=base_indent
+                ))
+        
+        # Cache the combined document if enabled
+        if should_use_cache and hasattr(self, "cache_manager"):
+            self.cache_manager.cache_document("_combined_doctree", doc, all_blocks)
+        
+        return doc, all_blocks

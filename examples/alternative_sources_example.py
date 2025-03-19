@@ -8,8 +8,8 @@ clients to work with documents from sources other than Notion.
 import os
 import tempfile
 from pathlib import Path
-from notionlp.api_client import ObsidianClient, LocalSource
-from notionlp.defaults import get_default, set_default
+from doctree_nlp.api_client import ObsidianClient, LocalSource
+from doctree_nlp.defaults import get_default, set_default
 
 # Create some sample markdown files for testing
 def create_sample_files():
@@ -85,7 +85,7 @@ def local_files_example(directory_path):
     
     # Set a custom cache directory through defaults
     set_default('cache.directory', 'local_cache')
-    set_default('cache.sources.internal', 'local')
+    set_default('cache.sources.local', 'local')
     
     # Initialize the local source client
     client = LocalSource(
@@ -107,6 +107,60 @@ def local_files_example(directory_path):
         print(f"\nDocument ID: {document.id}")
         print(f"Document title: {document.title}")
         print(f"Document source: {document.source_id}")
+        print(f"Document blocks: {len(document.blocks)}")
+        
+        if document.blocks:
+            print(f"\nFirst block type: {document.blocks[0].type}")
+            print(f"First block content preview: {document.blocks[0].content[:50]}...")
+            
+            if document.tree:
+                print("\nDocument has a document tree structure")
+
+
+def combined_doctree_example(directory_path):
+    """
+    Example of working with local files as a single DocTree.
+    
+    Args:
+        directory_path: Path to the directory containing markdown files
+    """
+    print("\n===== COMBINED DOCTREE EXAMPLE =====")
+    
+    # Initialize the local source client with source_as_single_doctree=True
+    client = LocalSource(
+        directory_path=directory_path,
+        file_pattern="**/*.md",
+        source_as_single_doctree=True
+    )
+    
+    # List all documents (should only be one combined document)
+    documents = client.list_documents()
+    print(f"Found {len(documents)} document(s) in combined mode:")
+    
+    for doc in documents:
+        print(f"- {doc.title} ({doc.id})")
+    
+    # Get the combined document
+    if documents:
+        combined_doc = client.get_document(documents[0].id)
+        print(f"\nCombined document ID: {combined_doc.id}")
+        print(f"Combined document title: {combined_doc.title}")
+        print(f"Total blocks: {len(combined_doc.blocks)}")
+        
+        # Display the hierarchical structure
+        if combined_doc.tree:
+            print("\nDocument tree structure:")
+            
+            # Show the first few heading blocks to demonstrate the hierarchy
+            heading_count = 0
+            for block in combined_doc.blocks:
+                if block.type.startswith('heading_'):
+                    indent = "  " * block.indent_level
+                    print(f"{indent}{block.type}: {block.content}")
+                    heading_count += 1
+                    if heading_count >= 10:  # Limit the output
+                        print("... more headings ...")
+                        break
 
 if __name__ == "__main__":
     # Create temporary files for demonstration
@@ -118,6 +172,9 @@ if __name__ == "__main__":
         
         # Demonstrate working with a directory of markdown files
         local_files_example(temp_dir)
+        
+        # Demonstrate working with a directory as a single combined DocTree
+        combined_doctree_example(temp_dir)
     
     finally:
         # Always clean up temporary files
