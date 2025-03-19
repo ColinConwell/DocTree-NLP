@@ -1,7 +1,14 @@
 """
 Example usage of the Notion NLP library with caching and rate limiting.
 """
-from notionlp import NotionClient, TextProcessor, Hierarchy, Tagger, DEFAULT_CACHE_DIR, get_env
+from notionlp import (
+    NotionClient, 
+    TextProcessor, 
+    Tagger, 
+    Document, 
+    DEFAULT_CACHE_DIR, 
+    get_env
+)
 from notionlp.structure import AuthenticationError
 
 def main():
@@ -33,39 +40,49 @@ def main():
 
         # Get content from first document
         if documents:
-            doc = documents[0]
-            print(f"\nProcessing document: {doc.title}")
+            doc_id = documents[0].id
+            print(f"\nProcessing document: {documents[0].title}")
 
-            # The get_document_content method returns a tuple (metadata, blocks)
-            metadata, blocks = client.get_document_content(doc.id)
-            print(f"Retrieved {len(blocks)} blocks from document '{metadata.title}'")
-            print(f"Last edited: {metadata.last_edited_time}")
-            print(f"Last fetched: {metadata.last_fetched}")
+            # Get document content and create a Document instance
+            document = client.get_document(doc_id)
+            
+            # Build document tree
+            document.build_tree()
+            
+            print(f"Retrieved {len(document.blocks)} blocks from document '{document.title}'")
+            print(f"Last edited: {document.last_edited_time}")
+            print(f"Last fetched: {document.last_fetched}")
 
             # Process text
             processor = TextProcessor()
-            processed_blocks = processor.process_blocks(blocks)
+            processed_blocks = processor.process_blocks(document.blocks)
 
             print("\nProcessed content:")
             for block in processed_blocks:
                 print(f"- Found {len(block['entities'])} entities")
                 print(f"- Keywords: {', '.join(block['keywords'])}")
 
-            # Build hierarchy
-            hierarchy = Hierarchy()
-            root = hierarchy.build_hierarchy(blocks)
-
+            # Show document preview
+            print("\nDocument preview:")
+            print(document.preview_text(n_chars=200))
+            
+            # Convert to different formats
+            print("\nMarkdown preview:")
+            markdown = document.to_markdown()
+            print(markdown[:200] + "..." if len(markdown) > 200 else markdown)
+            
+            # Document structure
             print("\nDocument structure:")
-            print(hierarchy.to_dict())
-
+            print(f"Tree depth: {len(document.tree.find_nodes_by_type('heading_1'))}")
+            
             # Generate tags
             tagger = Tagger()
             tagger.add_custom_tags(["important", "todo"])
 
             print("\nGenerated tags:")
-            for block in blocks:
-                tags = tagger.generate_tags(block)
-                print(f"Block tags: {[tag.name for tag in tags]}")
+            doc_tags = tagger.tag_document(document)
+            tag_count = sum(len(tags) for tags in doc_tags.values())
+            print(f"Generated {tag_count} tags across {len(doc_tags)} blocks")
 
             # Display cache information
             try:

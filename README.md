@@ -32,10 +32,47 @@ client = NotionClient(token="auto")  # searches env vars, .env files, and prompt
 4. List and process your documents:
 
 ```python
+# List all available documents
 documents = client.list_documents()
+
+# Get a full document with content and structure
+document = client.get_document(documents[0].id)
+
+# Access document metadata
+print(f"Title: {document.title}")
+print(f"Created: {document.created_time}")
+print(f"Last edited: {document.last_edited_time}")
+
+# Access document content
+print(f"Number of blocks: {len(document.blocks)}")
+for block in document.blocks[:3]:  # Show first 3 blocks
+    print(f"[{block.type}] {block.content}")
+
+# Build document tree for hierarchical navigation
+document.build_tree()
+
+# Find nodes by content pattern
+matches = document.tree.find_nodes_by_content("important")
+for node in matches:
+    print(f"Found '{node.block.content}'")
+    
+# Find nodes by type
+headings = document.tree.find_nodes_by_type("heading_1")
+for node in headings:
+    print(f"Heading: {node.block.content}")
+    
+# Convert document to different formats
+markdown = document.to_markdown()
+rst = document.to_rst()
+doc_dict = document.to_dict()
+
+# Preview content
+preview = document.preview_text(n_chars=200)
+sentences = document.preview_sentences(n=3)
 ```
 
 ```python
+# Legacy approach (still supported)
 # Initialize the text processor and tagger
 processor, tagger = TextProcessor(), Tagger()
 # Get the document content
@@ -153,10 +190,79 @@ openai_key = get_api_key("openai")  # Will check OPENAI_API_KEY, OPENAI_KEY, etc
 
 These functions search environment variables, `.env` files, and can even prompt the user for input when needed!
 
-## Document Parsing and API Access
+## Document Structure and Architecture
 
-### Document Formats
-You can convert Notion documents to various formats:
+The NotioNLPToolkit provides a comprehensive document structure model centered around the `Document` class. This structure has been designed to make working with document content more intuitive.
+
+### Core Classes
+
+- **Document**: The primary container for document metadata and content
+- **Block**: Represents individual content blocks (paragraphs, headings, list items, etc.)
+- **DocTree**: Manages hierarchical tree structure of document content
+- **Node**: Represents a node in the document tree with parent-child relationships
+- **Source**: Represents document sources (like your Notion account) with collection metadata
+- **LazyDocument**: Performance-optimized document that loads content only when needed
+- **DocumentWindow**: Windowed view into large documents for efficient navigation
+
+### Document Structure
+
+Documents contain blocks and can build a tree structure for hierarchical navigation:
+
+```python
+from notionlp import NotionClient
+
+# Initialize client
+client = NotionClient(token="auto")
+
+# Get a document with all its content
+document = client.get_document("your-document-id")
+
+# Access blocks directly
+for block in document.blocks:
+    print(f"{block.type}: {block.content}")
+    
+# Build a tree structure for hierarchical navigation
+document.build_tree()
+
+# Find specific content in the tree
+results = document.tree.find_nodes_by_content("important")
+headings = document.tree.find_nodes_by_type("heading_1")
+
+# Convert to different formats
+markdown = document.to_markdown()
+rst = document.to_rst()
+doc_dict = document.to_dict()
+
+# Preview content
+print(document.preview_text(n_chars=200))
+print(document.preview_sentences(n=3))
+
+# Load example documents
+example_doc = Document.load_example("meeting_notes")
+```
+
+### Jupyter Notebook Integration
+
+For Jupyter notebook users, there's built-in rich display support:
+
+```python
+from notionlp import NotionClient, display_document, display_document_tree, display_document_table
+
+# Get a document
+client = NotionClient(token="auto")
+document = client.get_document("your-document-id")
+
+# Display rich document previews
+display_document(document)  # Rich document card view
+display_document_table(document)  # Tabular view of blocks
+display_document_tree(document)  # Interactive tree visualization
+```
+
+The document will render as rich HTML in the notebook, with collapsible tree views and formatted content.
+
+### Legacy Document Parsing 
+
+The legacy document parsing functions are still supported:
 
 ```python
 from notionlp import NotionClient, export_to_markdown, export_to_rst, doc_to_dict
@@ -164,19 +270,15 @@ from notionlp import NotionClient, export_to_markdown, export_to_rst, doc_to_dic
 # Initialize client
 client = NotionClient(os.environ['NOTION_API_TOKEN'])
 
-# Get a document
+# Get a document using the legacy method
 documents = client.list_documents()
 doc = documents[0]  # First document
 metadata, blocks = client.get_document_content(doc.id)
 
-# Convert to different formats
+# Convert to different formats using legacy functions
 markdown_text = export_to_markdown(blocks)
 rst_text = export_to_rst(blocks)
 doc_dict = doc_to_dict(blocks)
-
-# Load example documents
-from notionlp import load_example_document
-example_blocks = load_example_document("meeting_notes")
 ```
 
 ### Raw API Data Access
@@ -211,6 +313,76 @@ for block in raw_data['block_data']:
 
 For a complete example of working with raw API data, see the [raw_data_example.py](examples/raw_data_example.py) file in the examples directory.
 
+## Performance Optimization
+
+For working with large documents or many documents at once, NotioNLPToolkit provides several performance optimization features.
+
+### Lazy Loading
+
+The `LazyDocument` class implements lazy loading, only fetching content when it's actually needed:
+
+```python
+from notionlp import NotionClient, create_lazy_document, LazyDocumentCollection
+
+# Initialize client
+client = NotionClient(token="auto")
+
+# Create a single lazy document
+lazy_doc = create_lazy_document("your-document-id", client)
+
+# Access metadata (doesn't load content)
+print(f"Title: {lazy_doc.title}")
+
+# Access blocks (triggers loading)
+blocks = lazy_doc.blocks  # Content is loaded now
+
+# Or create a collection of lazy documents
+collection = LazyDocumentCollection(client, preload_metadata=True)
+
+# Search by title (without loading content)
+results = collection.search_documents("meeting", search_titles=True, search_content=False)
+
+# Batch preload documents you know you'll need
+collection.batch_preload(["doc-id-1", "doc-id-2", "doc-id-3"])
+
+# Clear content to free memory
+collection.clear_loaded_content(keep_metadata=True)
+```
+
+### Document Windowing
+
+For very large documents, you can use windowing to display and navigate content efficiently:
+
+```python
+from notionlp import NotionClient, DocumentWindower, TreeWindower
+
+# Initialize client and get a document
+client = NotionClient(token="auto")
+document = client.get_document("your-document-id")
+
+# Create a document windower
+windower = DocumentWindower(default_window_size=50)
+
+# Create a window view of the document
+window = windower.create_window(document)
+print(f"Window: Blocks {window.start_index}-{window.end_index} of {window.total_blocks}")
+
+# Navigate windows
+if window.has_next:
+    next_window = windower.get_next_window(window, document)
+
+if window.has_previous:
+    prev_window = windower.get_previous_window(window, document)
+
+# Search for content
+text_window = windower.find_text_window(document, "important", context_blocks=2)
+
+# Convert window to formats
+markdown = window.to_markdown()
+```
+
+For more examples, see the [lazy_loading_example.py](examples/lazy_loading_example.py) and [windowing_example.py](examples/windowing_example.py) files.
+
 ## Interactive Demo
 
 Launch the interactive Streamlit demo:
@@ -237,13 +409,23 @@ python -m pytest tests/
 
 ```
 notionlp/
-├── __init__.py       # Main package exports
-├── api_client.py     # Notion API client
-├── api_env.py        # Environment and API handling
-├── structure.py      # Core models, hierarchy, tagging
-├── parsers.py        # Document parsing utilities
-└── text_processor.py # NLP capabilities
+├── __init__.py           # Main package exports
+├── api_client.py         # Notion API client
+├── api_env.py            # Environment and API handling
+├── cache_manager.py      # Document caching system
+├── document_windowing.py # Windowing for large documents
+├── env_loader.py         # Environment variables handler
+├── lazy_document.py      # Lazy loading implementation
+├── notebook.py           # Jupyter notebook integration
+├── parsers.py            # Document parsing utilities
+├── rate_limiter.py       # API rate limiting
+├── structure.py          # Core models, document tree, tagging
+└── text_processor.py     # NLP capabilities
 ```
+
+### Architecture Documentation
+
+For detailed architecture information, see the [architecture.md](docs/architecture.md) file which includes class diagrams and component relationships.
 
 ## Similar Tools
 

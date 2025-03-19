@@ -207,6 +207,45 @@ class NotionClient:
             logger.error(f"Error extracting title: {str(e)}")
             return "Untitled"
 
+    def get_document(self, document_id: str, use_cache: bool = None) -> Document:
+        """
+        Get a document with all its content.
+
+        Args:
+            document_id: ID of the document to fetch
+            use_cache: Whether to use cache for this request (overrides instance setting)
+
+        Returns:
+            Document: A Document instance with metadata and blocks
+            
+        Usage:
+            document = client.get_document(document_id)
+        """
+        metadata, blocks = self.get_document_content(document_id, use_cache)
+        
+        if metadata:
+            # Create a full Document instance with blocks
+            document = Document(
+                id=metadata.id,
+                title=metadata.title,
+                created_time=metadata.created_time,
+                last_edited_time=metadata.last_edited_time,
+                last_fetched=metadata.last_fetched,
+                etag=metadata.etag,
+                blocks=blocks
+            )
+            return document
+        else:
+            # Return an empty document if metadata couldn't be fetched
+            return Document(
+                id=document_id,
+                title="Unknown Document",
+                created_time=datetime.now(),
+                last_edited_time=datetime.now(),
+                last_fetched=datetime.now(),
+                blocks=blocks
+            )
+    
     def get_document_content(
         self, document_id: str, use_cache: bool = None
     ) -> Tuple[Document, List[Block]]:
