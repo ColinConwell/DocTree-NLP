@@ -2,7 +2,7 @@
 Test the DocTree class.
 """
 import pytest
-from notionlp.structure import DocTree, Block, Node
+from doctree_nlp.structure import DocTree, Block, Node
 
 @pytest.fixture
 def sample_blocks():

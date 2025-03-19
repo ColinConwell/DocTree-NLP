@@ -5,17 +5,17 @@ import pytest
 from unittest.mock import patch, MagicMock
 from datetime import datetime
 
-from notionlp.api_client import NotionClient
-from notionlp.structure import Document, Block
+from doctree_nlp.api_client import NotionClient
+from doctree_nlp.structure import Document, Block
 
 @pytest.fixture
 def mock_client():
     """Return a NotionClient with mocked API calls."""
-    with patch('notionlp.api_client.find_notion_token', return_value="fake_token"), \
-         patch('notionlp.api_client.CacheManager'), \
-         patch('notionlp.api_client.RateLimiter'), \
-         patch('notionlp.api_client.requests.get'), \
-         patch('notionlp.api_client.requests.post'):
+    with patch('doctree_nlp.api_client.find_notion_token', return_value="fake_token"), \
+         patch('doctree_nlp.api_client.CacheManager'), \
+         patch('doctree_nlp.api_client.RateLimiter'), \
+         patch('doctree_nlp.api_client.requests.get'), \
+         patch('doctree_nlp.api_client.requests.post'):
         client = NotionClient(token="fake_token", cache_enabled=False)
         return client
 

@@ -21,9 +21,9 @@ from typing import List, Dict, Any, Optional, Callable
 import multiprocessing as mp
 import matplotlib.pyplot as plt
 
-from notionlp.api_client import NotionClient
-from notionlp.structure import Document, Block, DocTree, Node
-from notionlp.caching import CacheManager
+from doctree_nlp.api_client import NotionClient
+from doctree_nlp.structure import Document, Block, DocTree, Node
+from doctree_nlp.caching import CacheManager
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, 

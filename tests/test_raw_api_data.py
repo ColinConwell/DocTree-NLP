@@ -8,8 +8,8 @@ import pytest
 from unittest.mock import patch, Mock
 from datetime import datetime
 
-from notionlp.api_client import NotionClient
-from notionlp.caching import CacheManager
+from doctree_nlp.api_client import NotionClient
+from doctree_nlp.caching import CacheManager
 
 # Sample test data
 SAMPLE_PAGE_DATA = {
@@ -59,7 +59,7 @@ SAMPLE_COMMENTS_DATA = [
 @pytest.fixture
 def mock_client():
     """Create a mock NotionClient with mocked requests."""
-    with patch("notionlp.api_client.requests") as mock_requests:
+    with patch("doctree_nlp.api_client.requests") as mock_requests:
         # Mock page response
         mock_page_response = Mock()
         mock_page_response.status_code = 200
@@ -119,7 +119,7 @@ def test_get_all_available_data_structure(mock_client):
     assert raw_data["block_data"] == SAMPLE_BLOCK_DATA
 
 
-@patch("notionlp.api_client.requests.get")
+@patch("doctree_nlp.api_client.requests.get")
 def test_get_all_available_data_error_handling(mock_get, mock_client):
     """Test error handling in get_all_available_data."""
     # Mock an error response for page data
@@ -139,8 +139,8 @@ def test_get_all_available_data_error_handling(mock_get, mock_client):
     assert raw_data["page_data"] == {}
 
 
-@patch("notionlp.cache_manager.CacheManager.get_cached_data")
-@patch("notionlp.cache_manager.CacheManager.cache_raw_data")
+@patch("doctree_nlp.cache_manager.CacheManager.get_cached_data")
+@patch("doctree_nlp.cache_manager.CacheManager.cache_raw_data")
 def test_get_all_available_data_caching(
     mock_cache_raw_data, mock_get_cached_data, mock_client
 ):

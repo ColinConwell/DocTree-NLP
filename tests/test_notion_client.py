@@ -4,11 +4,11 @@ Test the Notion client module.
 import pytest
 from unittest.mock import MagicMock, patch
 
-from notionlp.api_client import (
+from doctree_nlp.api_client import (
     NotionClient, AuthenticationError
 )
 
-from notionlp.structure import Document, Block
+from doctree_nlp.structure import Document, Block
 
 @pytest.fixture
 def mock_response():

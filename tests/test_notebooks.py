@@ -43,14 +43,14 @@ def modify_notebook_for_testing(nb):
                 cell.source = """
 import os
 from datetime import datetime
-from notionlp import (
+from doctree_nlp import (
     NotionClient,
     Hierarchy,
     Tagger,
     TextProcessor,
     DEFAULT_CACHE_DIR
 )
-from notionlp.structure import Document, Block
+from doctree_nlp.structure import Document, Block
 """
             elif i == 3:  # Authentication cell
                 cell.source = """

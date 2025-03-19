@@ -7,9 +7,9 @@ import logging
 from unittest.mock import MagicMock, patch
 from datetime import datetime
 
-from notionlp.lazy_document import LazyDocument, LazyDocumentCollection, create_lazy_document
-from notionlp.structure import Document, Block, DocTree
-from notionlp.api_client import NotionClient
+from doctree_nlp.lazy_document import LazyDocument, LazyDocumentCollection, create_lazy_document
+from doctree_nlp.structure import Document, Block, DocTree
+from doctree_nlp.api_client import NotionClient
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -217,7 +217,7 @@ class TestLazyDocumentCollection(unittest.TestCase):
         # No content should be loaded
         self.mock_client.get_document_content.assert_not_called()
     
-    @patch('notionlp.lazy_document.LazyDocument._load_blocks_if_needed')
+    @patch('doctree_nlp.lazy_document.LazyDocument._load_blocks_if_needed')
     def test_search_documents_by_content(self, mock_load):
         """Test searching documents by content."""
         # Set up some content for testing

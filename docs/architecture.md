@@ -1,8 +1,8 @@
-# NotioNLPToolkit Architecture
+# DocTree NLP Toolkit Architecture
 
 ## Core Components
 
-The NotioNLPToolkit is designed with a modular architecture, with several key components:
+The DocTree NLP Toolkit is designed with a modular architecture, with several key components:
 
 ```mermaid
 graph TD

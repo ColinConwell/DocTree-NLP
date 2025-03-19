@@ -9,8 +9,8 @@ import json
 from pathlib import Path
 from datetime import datetime, timedelta
 
-from notionlp.caching import CacheManager
-from notionlp.structure import Document, Block
+from doctree_nlp.caching import CacheManager
+from doctree_nlp.structure import Document, Block
 
 @pytest.fixture
 def temp_cache_dir():
@@ -57,7 +57,7 @@ def test_cache_manager_api_specific(temp_cache_dir):
     # Check that they use different subdirectories
     assert cache1.cache_dir != cache2.cache_dir
     assert cache1.cache_dir.parent == cache2.cache_dir.parent
-    assert cache1.cache_dir.parent == Path(temp_cache_dir)
+    assert cache1.cache_dir.parent.parent == Path(temp_cache_dir)
     
     # Verify both directories were created
     assert cache1.cache_dir.exists()

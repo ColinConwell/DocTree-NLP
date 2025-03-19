@@ -6,7 +6,7 @@ import pytest
 from unittest.mock import patch, MagicMock
 from pathlib import Path
 
-from notionlp.env_loader import (
+from doctree_nlp.env_loader import (
     find_notion_token,
     _is_jupyter_notebook,
     _is_script,
@@ -16,7 +16,7 @@ from notionlp.env_loader import (
     get_env,
     get_api_key
 )
-from notionlp.api_client import NotionClient, AuthenticationError
+from doctree_nlp.api_client import NotionClient, AuthenticationError
 
 @pytest.fixture
 def temp_env_file(tmp_path):
@@ -32,7 +32,7 @@ def test_load_dotenv_file(temp_env_file):
     assert "NOTION_API_TOKEN" in env_vars
     assert env_vars["NOTION_API_TOKEN"] == "test-token-from-env-file"
 
-@patch("notionlp.env_loader._load_dotenv_file")
+@patch("doctree_nlp.env_loader._load_dotenv_file")
 def test_search_env_files(mock_load_dotenv):
     """Test searching for .env files in directories."""
     # Mock the _load_dotenv_file function to return different values for different paths
@@ -64,7 +64,7 @@ def test_find_notion_token_from_env():
     assert token == "test-token-from-env"
 
 @patch("os.environ", {})
-@patch("notionlp.env_loader._search_env_files")
+@patch("doctree_nlp.env_loader._search_env_files")
 def test_find_notion_token_from_env_file(mock_search_env_files):
     """Test finding token from .env files."""
     mock_search_env_files.return_value = {"NOTION_API_TOKEN": "test-token-from-env-file"}
@@ -72,9 +72,9 @@ def test_find_notion_token_from_env_file(mock_search_env_files):
     assert token == "test-token-from-env-file"
 
 @patch("os.environ", {})
-@patch("notionlp.env_loader._search_env_files")
-@patch("notionlp.env_loader._is_jupyter_notebook")
-@patch("notionlp.env_loader._get_jupyter_input")
+@patch("doctree_nlp.env_loader._search_env_files")
+@patch("doctree_nlp.env_loader._is_jupyter_notebook")
+@patch("doctree_nlp.env_loader._get_jupyter_input")
 def test_find_notion_token_from_jupyter(mock_get_jupyter_input, mock_is_jupyter, mock_search_env_files):
     """Test finding token from Jupyter notebook input."""
     mock_search_env_files.return_value = {}
@@ -86,10 +86,10 @@ def test_find_notion_token_from_jupyter(mock_get_jupyter_input, mock_is_jupyter,
     assert mock_get_jupyter_input.called
 
 @patch("os.environ", {})
-@patch("notionlp.env_loader._search_env_files")
-@patch("notionlp.env_loader._is_jupyter_notebook")
-@patch("notionlp.env_loader._is_script")
-@patch("notionlp.env_loader._get_console_input")
+@patch("doctree_nlp.env_loader._search_env_files")
+@patch("doctree_nlp.env_loader._is_jupyter_notebook")
+@patch("doctree_nlp.env_loader._is_script")
+@patch("doctree_nlp.env_loader._get_console_input")
 def test_find_notion_token_from_console(mock_get_console_input, mock_is_script, mock_is_jupyter, mock_search_env_files):
     """Test finding token from console input."""
     mock_search_env_files.return_value = {}
@@ -101,7 +101,7 @@ def test_find_notion_token_from_console(mock_get_console_input, mock_is_script, 
     assert token == "test-token-from-console"
     assert mock_get_console_input.called
 
-@patch("notionlp.api_client.find_notion_token")
+@patch("doctree_nlp.api_client.find_notion_token")
 def test_notion_client_auto_token(mock_find_token):
     """Test NotionClient with auto token discovery."""
     mock_find_token.return_value = "test-token-auto"
@@ -110,7 +110,7 @@ def test_notion_client_auto_token(mock_find_token):
     assert client.token == "test-token-auto"
     assert mock_find_token.called
 
-@patch("notionlp.api_client.find_notion_token")
+@patch("doctree_nlp.api_client.find_notion_token")
 def test_notion_client_auto_token_not_found(mock_find_token):
     """Test NotionClient with auto token discovery when no token found."""
     mock_find_token.return_value = None

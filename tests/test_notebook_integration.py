@@ -5,8 +5,8 @@ import pytest
 from unittest.mock import patch, MagicMock
 from datetime import datetime
 
-from notionlp.structure import Document, Block
-from notionlp.notebook import (
+from doctree_nlp.structure import Document, Block
+from doctree_nlp.notebook import (
     document_to_html, 
     display_document, 
     display_document_tree,
@@ -55,8 +55,8 @@ def test_document_to_html(sample_document):
 
 def test_display_document(sample_document):
     """Test displaying document."""
-    with patch('notionlp.notebook.HTML') as mock_html, \
-         patch('notionlp.notebook.display') as mock_display:
+    with patch('doctree_nlp.notebook.HTML') as mock_html, \
+         patch('doctree_nlp.notebook.display') as mock_display:
         
         # Mock HTML function to return input
         mock_html.side_effect = lambda x: x
@@ -77,8 +77,8 @@ def test_display_document_tree(sample_document):
     # Build tree first
     sample_document.build_tree()
     
-    with patch('notionlp.notebook.HTML') as mock_html, \
-         patch('notionlp.notebook.display') as mock_display:
+    with patch('doctree_nlp.notebook.HTML') as mock_html, \
+         patch('doctree_nlp.notebook.display') as mock_display:
         
         # Mock HTML function to return input
         mock_html.side_effect = lambda x: x
@@ -114,8 +114,8 @@ def test_document_to_table_html(sample_document):
 
 def test_display_document_table(sample_document):
     """Test displaying document as table."""
-    with patch('notionlp.notebook.HTML') as mock_html, \
-         patch('notionlp.notebook.display') as mock_display:
+    with patch('doctree_nlp.notebook.HTML') as mock_html, \
+         patch('doctree_nlp.notebook.display') as mock_display:
         
         # Mock HTML function to return input
         mock_html.side_effect = lambda x: x
@@ -137,8 +137,8 @@ def test_auto_build_tree_for_display(sample_document):
     # Don't build tree ahead of time
     sample_document.tree = None
     
-    with patch('notionlp.notebook.HTML') as mock_html, \
-         patch('notionlp.notebook.display') as mock_display:
+    with patch('doctree_nlp.notebook.HTML') as mock_html, \
+         patch('doctree_nlp.notebook.display') as mock_display:
         
         # Mock HTML function to return input
         mock_html.side_effect = lambda x: x

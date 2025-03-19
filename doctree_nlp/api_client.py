@@ -3,8 +3,11 @@ Notion API client implementation with enhanced content handling.
 """
 
 import logging
+import os
+import re
 import requests
 from datetime import datetime
+from pathlib import Path
 from typing import List, Dict, Any, Optional, Tuple, Union, Literal
 from tqdm.auto import tqdm
 
@@ -1430,7 +1433,7 @@ class LocalSource:
                 continue
                 
             # Check for headings (ATX style: # Heading)
-            heading_match = re.match(r'^(#{1,6})\s+(.+)$'$', line)
+            heading_match = re.match(r'^(#{1,6})\s+(.+)$', line)
             if heading_match:
                 # Finish the current block if any
                 if current_block['content']:
@@ -1455,7 +1458,7 @@ class LocalSource:
                 continue
                 
             # Check for bullet lists
-            bullet_match = re.match(r'^(\s*)[-*+]\s+(.+)$'$', line)
+            bullet_match = re.match(r'^(\s*)[-*+]\s+(.+)$', line)
             if bullet_match:
                 # Finish the current block if it's not a bullet list or has different indentation
                 indent_level = len(bullet_match.group(1)) // 2
@@ -1477,7 +1480,7 @@ class LocalSource:
                 continue
                 
             # Check for numbered lists
-            number_match = re.match(r'^(\s*)(\d+)[\.\)]\s+(.+)$'$', line)
+            number_match = re.match(r'^(\s*)(\d+)[\.\)]\s+(.+)$', line)
             if number_match:
                 # Finish the current block if it's not a numbered list or has different indentation
                 indent_level = len(number_match.group(1)) // 2
@@ -1499,7 +1502,7 @@ class LocalSource:
                 continue
                 
             # Check for code blocks (```lang)
-            code_start_match = re.match(r'^```(\w*)$'$', line)
+            code_start_match = re.match(r'^```(\w*)$', line)
             if code_start_match and current_block['type'] != 'code':
                 # Finish the current block if any
                 if current_block['content']:
@@ -1530,7 +1533,7 @@ class LocalSource:
                 continue
                 
             # Check for block quotes
-            quote_match = re.match(r'^>\s*(.*)$'$', line)
+            quote_match = re.match(r'^>\s*(.*)$', line)
             if quote_match:
                 # Finish the current block if it's not a quote
                 if current_block['type'] != 'quote' and current_block['content']:
@@ -1550,7 +1553,7 @@ class LocalSource:
                 continue
                 
             # Check for horizontal rules
-            if re.match(r'^(---|\*\*\*|___)\s*$'$', line):
+            if re.match(r'^(---|\*\*\*|___)\s*$', line):
                 # Finish the current block if any
                 if current_block['content']:
                     blocks.append(Block(

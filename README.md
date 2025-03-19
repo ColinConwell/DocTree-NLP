@@ -141,7 +141,7 @@ You can set up your token in one of these ways:
 
 1. Auto-discovery (most convenient):
 ```python
-from notionlp import NotionClient
+from doctree_nlp import NotionClient
 client = NotionClient(token="auto")
 ```
 
@@ -167,13 +167,13 @@ echo "NOTION_API_TOKEN=your-notion-api-token" > .env
 
 4. During runtime (not recommended for production):
 ```python
-from notionlp import NotionClient
+from doctree_nlp import NotionClient
 client = NotionClient("your-notion-api-token")
 ```
 
 ### Working with Environment Variables
 
-NotioNLPToolkit provides utilities for handling environment variables in a user-friendly way:
+DocTree NLP Toolkit provides utilities for handling environment variables in a user-friendly way:
 
 ```python
 from doctree_nlp.env_loader import get_env, get_required_env, get_api_key, EnvLoader

@@ -5,7 +5,7 @@ import pytest
 from unittest.mock import patch, MagicMock
 from datetime import datetime
 
-from notionlp.structure import Source
+from doctree_nlp.structure import Source
 
 @pytest.fixture
 def sample_source():
@@ -72,8 +72,8 @@ def test_to_dataframe(sample_source):
 def test_to_dataframe_no_pandas(sample_source):
     """Test to_dataframe when pandas is not available."""
     # Mock import error
-    with patch("notionlp.structure.pd", None):
-        with patch("notionlp.structure.logger") as mock_logger:
+    with patch("doctree_nlp.structure.pd", None):
+        with patch("doctree_nlp.structure.logger") as mock_logger:
             # Try to convert to dataframe
             df = sample_source.to_dataframe()
             

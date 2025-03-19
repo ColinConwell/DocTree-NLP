@@ -5,7 +5,7 @@ import pytest
 from datetime import datetime
 from unittest.mock import patch, MagicMock
 
-from notionlp.structure import Document, Block, DocTree
+from doctree_nlp.structure import Document, Block, DocTree
 
 @pytest.fixture
 def sample_document():
