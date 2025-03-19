@@ -886,21 +886,20 @@ class NotionClient:
 # Exceptions ------------------------------------------------------------
 
 
-class NotionNLPError(Exception):
-    """Base exception for Notion NLP library."""
+class DocTreeError(Exception):
+    """Base exception for DocTree NLP library."""
     pass
 
-# Alias for future transition
-DocTreeError = NotionNLPError
+# Base exception class for the library
 
 
-class AuthenticationError(NotionNLPError):
+class AuthenticationError(DocTreeError):
     """Raised when authentication fails."""
 
     pass
 
 
-class CacheError(NotionNLPError):
+class CacheError(DocTreeError):
     """Raised when cache operations fail."""
 
     pass

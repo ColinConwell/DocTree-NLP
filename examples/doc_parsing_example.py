@@ -1,5 +1,5 @@
 """
-Example script demonstrating the document parsing functionality of NotioNLPToolkit.
+Example script demonstrating the document parsing functionality of DocTree NLP Toolkit.
 
 This script shows how to:
 1. Load example documents
@@ -10,9 +10,9 @@ import json
 import os
 from pathlib import Path
 
-from notionlp import Hierarchy
+from doctree_nlp import Hierarchy
 
-from notionlp.parsers import (
+from doctree_nlp.parsers import (
     doc_to_dict, 
     export_to_markdown, 
     export_to_rst, 

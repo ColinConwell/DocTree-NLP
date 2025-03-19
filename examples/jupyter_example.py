@@ -34,7 +34,7 @@ def main():
         In your notebook, you can use:
         
         ```python
-        from notionlp import NotionClient, display_document, display_document_tree, display_document_table
+        from doctree_nlp import NotionClient, display_document, display_document_tree, display_document_table
         
         # Initialize client and get document
         client = NotionClient(token="auto")
@@ -50,8 +50,8 @@ def main():
     
     # Import necessary modules
     from datetime import datetime
-    from notionlp import Document, Block
-    from notionlp.notebook import (
+    from doctree_nlp import Document, Block
+    from doctree_nlp.notebook import (
         display_document, 
         display_document_tree, 
         display_document_table
@@ -111,7 +111,7 @@ def main():
     
     # Try loading from Notion if available
     try:
-        from notionlp import NotionClient
+        from doctree_nlp import NotionClient
         
         client = NotionClient(token="auto")
         documents = client.list_documents()

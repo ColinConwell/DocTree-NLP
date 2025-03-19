@@ -11,7 +11,7 @@ from pathlib import Path
 from pprint import pprint
 from dotenv import load_dotenv
 
-from notionlp.api_client import NotionClient
+from doctree_nlp.api_client import NotionClient
 
 # Load environment variables
 load_dotenv()
@@ -79,7 +79,7 @@ def main():
         analyze_data_structure(raw_data)
 
         # Save the raw data to a file for further exploration
-        output_path = Path("notionlp_data") / "raw_data_example.json"
+        output_path = Path("doctree_nlp_data") / "raw_data_example.json"
         save_raw_data(raw_data, output_path)
 
     except Exception as e:

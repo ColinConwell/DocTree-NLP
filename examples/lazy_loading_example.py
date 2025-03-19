@@ -1,5 +1,5 @@
 """
-Example demonstrating lazy loading functionality in NotioNLPToolkit.
+Example demonstrating lazy loading functionality in DocTree NLP Toolkit.
 
 This script demonstrates how to use LazyDocument and LazyDocumentCollection
 to efficiently handle large document collections with minimal memory usage.
@@ -11,9 +11,9 @@ import psutil
 from pathlib import Path
 from datetime import datetime
 
-from notionlp.api_client import NotionClient
-from notionlp.lazy_document import LazyDocument, LazyDocumentCollection, create_lazy_document
-from notionlp.structure import Document, Block
+from doctree_nlp.api_client import NotionClient
+from doctree_nlp.lazy_document import LazyDocument, LazyDocumentCollection, create_lazy_document
+from doctree_nlp.structure import Document, Block
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, 

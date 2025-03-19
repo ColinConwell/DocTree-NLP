@@ -4,7 +4,7 @@ Example showing advanced environment variable handling with EnvLoader.
 This example demonstrates how to use the EnvLoader for managing environment 
 variables, API keys, and configuration values with interactive input support.
 """
-from notionlp import EnvLoader, get_env, get_required_env, get_api_key
+from doctree_nlp import EnvLoader, get_env, get_required_env, get_api_key
 
 def main():
     """Demonstrate environment variable loading features."""

@@ -1,5 +1,5 @@
 """
-Example demonstrating the new defaults configuration system in NotioNLPToolkit.
+Example demonstrating the new defaults configuration system in DocTree NLP Toolkit.
 
 This script demonstrates how to use the defaults system to customize the toolkit's
 behavior and how to load and save configuration files.
@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 from pprint import pprint
 
-from notionlp import (
+from doctree_nlp import (
     get_defaults, get_default, set_default, update_defaults,
     load_defaults_from_env, load_defaults_from_file, save_defaults_to_file,
     NotionClient

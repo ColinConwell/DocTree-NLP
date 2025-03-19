@@ -592,7 +592,7 @@ class Document(BaseModel):
     
     def _repr_html_(self) -> str:
         """Return HTML representation for Jupyter notebooks."""
-        from notionlp.notebook import document_to_html
+        from doctree_nlp.notebook import document_to_html
         return document_to_html(self)
 
 # Tag System ------------------------------------------------------------

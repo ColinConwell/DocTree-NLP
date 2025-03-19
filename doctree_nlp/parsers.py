@@ -1,5 +1,5 @@
 """
-Parsers and utilities for NotioNLPToolkit.
+Parsers and utilities for DocTree NLP Toolkit.
 
 This module provides convenience functions for parsing Notion documents
 into various formats including dictionaries, markdown, and RST.

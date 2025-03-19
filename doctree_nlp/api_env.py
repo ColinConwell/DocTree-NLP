@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 # Show deprecation warning
 warnings.warn(
-    "notionlp.api_env is deprecated. Please use notionlp.env_loader instead.",
+    "doctree_nlp.api_env is deprecated. Please use doctree_nlp.env_loader instead.",
     DeprecationWarning,
     stacklevel=2
 )

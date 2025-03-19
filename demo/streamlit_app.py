@@ -8,7 +8,7 @@ import streamlit as st
 import time
 from doctree_nlp import NotionClient, TextProcessor, Hierarchy, Tagger
 from doctree_nlp.defaults import get_default
-from doctree_nlp.api_client import AuthenticationError, NotionNLPError, CacheError
+from doctree_nlp.api_client import AuthenticationError, DocTreeError, CacheError
 
 # Configure logging with more detail
 logging.basicConfig(
@@ -22,7 +22,7 @@ logger.info(f"Python version: {os.sys.version}")
 
 try:
     # Configure Streamlit page
-    st.set_page_config(page_title="Notion NLP Demo",
+    st.set_page_config(page_title="DocTree NLP Demo",
                        page_icon="📚",
                        layout="wide",
                        initial_sidebar_state="expanded")

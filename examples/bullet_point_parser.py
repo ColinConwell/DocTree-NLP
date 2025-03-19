@@ -7,8 +7,8 @@ into a nested dictionary structure.
 import re
 import json
 from typing import List, Dict, Any
-from notionlp import Hierarchy
-from notionlp.structure import Block
+from doctree_nlp import Hierarchy
+from doctree_nlp.structure import Block
 
 def parse_bullet_points(text: str) -> Dict[str, Any]:
     """
@@ -112,7 +112,7 @@ def main():
         # Sample bullet point text
         sample_text = """
         • Project Overview
-          • Title: NotioNLP Toolkit
+          • Title: DocTree NLP Toolkit
           • Version: 0.1.0
           • Description: NLP tools for Notion documents
         • Features

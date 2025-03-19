@@ -4,7 +4,7 @@ Example demonstrating the caching and rate limiting features of the Notion clien
 import os
 import time
 from dotenv import load_dotenv
-from notionlp import NotionClient, get_default
+from doctree_nlp import NotionClient, get_default
 
 # Load environment variables
 load_dotenv()

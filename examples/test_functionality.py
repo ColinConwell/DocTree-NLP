@@ -4,13 +4,13 @@ Test script to verify core functionality of the Notion NLP library.
 import os
 from typing import List
 
-from notionlp import (
+from doctree_nlp import (
     NotionClient, 
     Hierarchy, 
     Tagger,
     TextProcessor, 
     Block,
-    NotionNLPError
+    DocTreeError
 )
 
 def analyze_document_structure(blocks: List[Block]):
@@ -64,7 +64,7 @@ def main():
         # Initialize clients
         notion_token = os.environ.get('NOTION_API_TOKEN')
         if not notion_token:
-            raise NotionNLPError("NOTION_API_TOKEN not found in environment variables")
+            raise DocTreeError("NOTION_API_TOKEN not found in environment variables")
 
         print("Initializing clients...")
         client = NotionClient(notion_token)
@@ -103,8 +103,8 @@ def main():
 
         print("\nTest completed successfully!")
 
-    except NotionNLPError as e:
-        print(f"Notion NLP Error: {str(e)}")
+    except DocTreeError as e:
+        print(f"DocTree NLP Error: {str(e)}")
     except Exception as e:
         print(f"Unexpected error: {str(e)}")
 

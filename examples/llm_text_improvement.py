@@ -6,7 +6,7 @@ by summarizing content or correcting spelling and grammar.
 """
 from typing import Dict, Any, Optional
 
-from notionlp import TextProcessor, Block, get_api_key
+from doctree_nlp import TextProcessor, Block, get_api_key
 
 try:
     import anthropic
@@ -118,7 +118,7 @@ def main():
         
         # Sample text with errors
         sample_text = """
-        The NotioNLP library is desined to help developers work with Notion documents.
+        The DocTree NLP library is desined to help developers work with Notion documents.
         It provides various NLP capabilites such as entity extraction, text summarization,
         and document tagging. The libary can be used to build powerfull applications
         that leverage both Notion's API and modern NLP techniques.

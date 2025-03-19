@@ -1,5 +1,5 @@
 """
-Example demonstrating document windowing functionality in NotioNLPToolkit.
+Example demonstrating document windowing functionality in DocTree NLP Toolkit.
 
 This script demonstrates how to use DocumentWindower and TreeWindower
 to efficiently navigate and display large documents.
@@ -10,10 +10,10 @@ import logging
 from pathlib import Path
 from datetime import datetime
 
-from notionlp.api_client import NotionClient
-from notionlp.structure import Document, Block
-from notionlp.windowing import DocumentWindower, TreeWindower
-from notionlp.lazy_document import LazyDocument, create_lazy_document
+from doctree_nlp.api_client import NotionClient
+from doctree_nlp.structure import Document, Block
+from doctree_nlp.windowing import DocumentWindower, TreeWindower
+from doctree_nlp.lazy_document import LazyDocument, create_lazy_document
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, 

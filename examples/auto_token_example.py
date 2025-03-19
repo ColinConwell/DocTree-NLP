@@ -1,7 +1,7 @@
 """
 Example demonstrating the auto token discovery feature.
 """
-from notionlp import NotionClient
+from doctree_nlp import NotionClient
 
 def main():
     """

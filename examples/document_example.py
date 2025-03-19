@@ -6,7 +6,7 @@ build tree structures, and navigate document hierarchies.
 """
 import os
 from datetime import datetime
-from notionlp import NotionClient, Document, Block, Source
+from doctree_nlp import NotionClient, Document, Block, Source
 
 def main():
     """Run the document example."""

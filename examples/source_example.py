@@ -6,7 +6,7 @@ of documents and associated metadata.
 """
 import os
 from datetime import datetime
-from notionlp import Source, Document, Block
+from doctree_nlp import Source, Document, Block
 
 def main():
     """Run the Source example."""

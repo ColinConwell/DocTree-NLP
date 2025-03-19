@@ -1,5 +1,5 @@
 """
-Jupyter notebook integration for NotioNLPToolkit.
+Jupyter notebook integration for DocTree NLP Toolkit.
 
 This module provides interactive HTML widgets and rich display 
 capabilities for Jupyter notebooks.

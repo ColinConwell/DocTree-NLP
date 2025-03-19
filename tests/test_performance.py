@@ -1,5 +1,5 @@
 """
-Performance testing for NotioNLPToolkit with large document collections.
+Performance testing for DocTree NLP Toolkit with large document collections.
 
 This module provides benchmarking tools to evaluate the library's performance
 with large document collections focusing on:
