@@ -19,8 +19,14 @@ from .structure import Document, Block
 # Set up logging
 logger = logging.getLogger(__name__)
 
-# Default cache location
-DEFAULT_CACHE_DIR = "notion_cache"
+# Import defaults
+from .defaults import get_default
+
+# Constants from defaults for backward compatibility
+DEFAULT_CACHE_DIR = get_default('cache.directory')
+CACHE_SOURCE_NOTION = get_default('cache.sources.notion')
+CACHE_SOURCE_INTERNAL = get_default('cache.sources.internal')
+DEFAULT_CACHE_SOURCE = get_default('cache.default_source')
 
 # Cache Manager ----------------------------------------------------------------
 
@@ -33,6 +39,7 @@ class CacheManager:
         api_token: str,
         cache_dir: str = DEFAULT_CACHE_DIR,
         max_age_days: Optional[int] = None,
+        cache_source: str = DEFAULT_CACHE_SOURCE,
     ):
         """
         Initialize the cache manager.
@@ -41,10 +48,11 @@ class CacheManager:
             api_token: Notion API token (used to segregate caches by API key)
             cache_dir: Directory to store cache files
             max_age_days: Maximum age of cache entries in days (None for no expiry)
+            cache_source: Source of the cached documents (notion, internal, etc.)
         """
         # Create a token hash to use in the cache path to separate caches by API key
         token_hash = hashlib.md5(api_token.encode()).hexdigest()[:8]
-        self.cache_dir = Path(cache_dir) / token_hash
+        self.cache_dir = Path(cache_dir) / cache_source / token_hash
         self.max_age_seconds = max_age_days * 24 * 60 * 60 if max_age_days else None
         self._ensure_cache_dir()
 
@@ -396,29 +404,41 @@ class CacheManager:
 # Helper Functions ------------------------------------------------------------
 
 
-def get_cache_dir() -> Path:
-    """Get the default cache directory."""
-    return Path(DEFAULT_CACHE_DIR)
+def get_cache_dir(cache_source: str = DEFAULT_CACHE_SOURCE) -> Path:
+    """
+    Get the default cache directory.
+    
+    Args:
+        cache_source: Source of the cached documents (notion, internal, etc.)
+    """
+    return Path(DEFAULT_CACHE_DIR) / cache_source
 
 
-def get_api_specific_cache_dir(api_token: str) -> Path:
-    """Get the API-specific cache directory."""
+def get_api_specific_cache_dir(api_token: str, cache_source: str = DEFAULT_CACHE_SOURCE) -> Path:
+    """
+    Get the API-specific cache directory.
+    
+    Args:
+        api_token: API token for API-specific cache
+        cache_source: Source of the cached documents (notion, internal, etc.)
+    """
     token_hash = hashlib.md5(api_token.encode()).hexdigest()[:8]
-    return get_cache_dir() / token_hash
+    return get_cache_dir(cache_source) / token_hash
 
 
-def get_cache_path(doc_id: str, api_token: Optional[str] = None) -> Path:
+def get_cache_path(doc_id: str, api_token: Optional[str] = None, cache_source: str = DEFAULT_CACHE_SOURCE) -> Path:
     """
     Get the cache path for a document.
 
     Args:
         doc_id: Document ID
         api_token: Optional API token for API-specific cache
+        cache_source: Source of the cached documents (notion, internal, etc.)
 
     Returns:
         Path: Cache file path
     """
     if api_token:
-        return get_api_specific_cache_dir(api_token) / f"{doc_id}.json"
+        return get_api_specific_cache_dir(api_token, cache_source) / f"{doc_id}.json"
     else:
-        return get_cache_dir() / f"{doc_id}.json"
+        return get_cache_dir(cache_source) / f"{doc_id}.json"

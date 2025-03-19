@@ -4,7 +4,7 @@ Example demonstrating the caching and rate limiting features of the Notion clien
 import os
 import time
 from dotenv import load_dotenv
-from notionlp import NotionClient, DEFAULT_CACHE_DIR
+from notionlp import NotionClient, get_default
 
 # Load environment variables
 load_dotenv()
@@ -12,10 +12,13 @@ NOTION_API_KEY = os.getenv("NOTION_API_KEY")
 
 def main():
     # Create standard client with default caching
+    # Get default cache directory from global defaults
+    default_cache_dir = get_default('cache.directory')
+    
     client = NotionClient(
         token=NOTION_API_KEY,
         cache_enabled=True,
-        cache_dir=DEFAULT_CACHE_DIR,
+        cache_dir=default_cache_dir,
         max_cache_age_days=1,  # Cache valid for 1 day
         rate_limit=3  # 3 requests per second
     )

@@ -190,6 +190,49 @@ openai_key = get_api_key("openai")  # Will check OPENAI_API_KEY, OPENAI_KEY, etc
 
 These functions search environment variables, `.env` files, and can even prompt the user for input when needed!
 
+### Global Configuration System
+
+NotioNLPToolkit includes a flexible configuration system that allows you to customize default behavior throughout the toolkit:
+
+```python
+from notionlp import (
+    get_defaults, get_default, set_default, update_defaults,
+    load_defaults_from_env, load_defaults_from_file, save_defaults_to_file
+)
+
+# Get the current configuration
+defaults = get_defaults().to_dict()
+print(defaults)
+
+# Get specific configuration values
+cache_dir = get_default('cache.directory')  # 'cache'
+window_size = get_default('document.window_size')  # 50
+
+# Change configuration values
+set_default('cache.directory', 'custom_cache_dir')
+set_default('api.rate_limit', 5)
+
+# Update multiple values at once
+update_defaults({
+    'cache': {
+        'max_age_days': 7,
+        'sources': {
+            'custom': 'my_custom_source'
+        }
+    }
+})
+
+# Load configuration from environment variables
+# NOTIONLP_CACHE_DIRECTORY=my_cache_dir python my_script.py
+load_defaults_from_env()
+
+# Save/load configuration to/from files
+save_defaults_to_file('config.json')  # Also supports YAML
+load_defaults_from_file('config.json')
+```
+
+The configuration system includes settings for caching, API access, document handling, and more. All components in the toolkit automatically use these defaults, creating a consistent experience.
+
 ## Document Structure and Architecture
 
 The NotioNLPToolkit provides a comprehensive document structure model centered around the `Document` class. This structure has been designed to make working with document content more intuitive.

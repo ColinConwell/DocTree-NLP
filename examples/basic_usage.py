@@ -6,7 +6,7 @@ from notionlp import (
     TextProcessor, 
     Tagger, 
     Document, 
-    DEFAULT_CACHE_DIR, 
+    get_default,
     get_env
 )
 from notionlp.structure import AuthenticationError
@@ -17,7 +17,7 @@ def main():
         client = NotionClient(
             token="auto",                      # Auto-discover token
             cache_enabled=True,                # Enable caching
-            cache_dir=DEFAULT_CACHE_DIR,       # Use default cache directory
+            cache_dir=get_default('cache.directory'),  # Use default cache directory
             max_cache_age_days=1,              # Cache valid for 1 day
             rate_limit=3                       # Limit to 3 requests per second (Notion API limit)
         )

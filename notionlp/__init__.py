@@ -8,7 +8,8 @@ content from Notion documents using the official Notion API.
 __version__ = "0.4.0"
 
 from .api_client import (
-    NotionClient, NotionNLPError, AuthenticationError, CacheError
+    NotionClient, ObsidianClient, LocalSource, 
+    NotionNLPError, AuthenticationError, CacheError
 )
 
 from .env_loader import (
@@ -21,8 +22,13 @@ from .structure import (
 
 from .text_processor import TextProcessor
 
-from .cache_manager import (
-    CacheManager, DEFAULT_CACHE_DIR
+from .caching import (
+    CacheManager, DEFAULT_CACHE_DIR, CACHE_SOURCE_NOTION, CACHE_SOURCE_INTERNAL
+)
+
+from .defaults import (
+    get_defaults, get_default, set_default, update_defaults,
+    load_defaults_from_env, load_defaults_from_file, save_defaults_to_file
 )
 
 from .rate_limiter import RateLimiter
@@ -32,7 +38,7 @@ from .lazy_document import (
     LazyDocument, LazyDocumentCollection, create_lazy_document
 )
 
-from .document_windowing import (
+from .windowing import (
     DocumentWindow, DocumentWindower, TreeWindower
 )
 
@@ -70,7 +76,19 @@ ENV_HELPERS = [
 
 CACHE_CONFIG = [
     "CacheManager",
-    "DEFAULT_CACHE_DIR"
+    "DEFAULT_CACHE_DIR",
+    "CACHE_SOURCE_NOTION", 
+    "CACHE_SOURCE_INTERNAL"
+]
+
+DEFAULTS_CONFIG = [
+    "get_defaults",
+    "get_default",
+    "set_default",
+    "update_defaults",
+    "load_defaults_from_env",
+    "load_defaults_from_file",
+    "save_defaults_to_file"
 ]
 
 ERRORS = [
@@ -88,9 +106,15 @@ PERFORMANCE_TOOLS = [
     "TreeWindower"
 ]
 
-__all__ = [
-    # Core components
+SOURCES = [
     "NotionClient",
+    "ObsidianClient",
+    "LocalSource"
+]
+
+__all__ = [
+    # Data sources
+    *SOURCES,
     "RateLimiter",
     
     # Helper modules
@@ -98,6 +122,7 @@ __all__ = [
     *DATA_STRUCTURES,
     *ENV_HELPERS,
     *CACHE_CONFIG,
+    *DEFAULTS_CONFIG,
     *NOTEBOOK_HELPERS,
     
     # Processing

@@ -9,7 +9,7 @@ import json
 from pathlib import Path
 from datetime import datetime, timedelta
 
-from notionlp.cache_manager import CacheManager
+from notionlp.caching import CacheManager
 from notionlp.structure import Document, Block
 
 @pytest.fixture

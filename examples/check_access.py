@@ -7,7 +7,7 @@ import time
 from notionlp.api_client import (
     NotionClient, AuthenticationError, NotionNLPError, CacheError
 )
-from notionlp.cache_manager import DEFAULT_CACHE_DIR
+from notionlp.caching import DEFAULT_CACHE_DIR
 
 def main():
     try:

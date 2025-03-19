@@ -10,6 +10,7 @@ from typing import List, Dict, Any, Optional, Generator, Tuple
 from dataclasses import dataclass
 
 from .structure import Document, Block, DocTree, Node
+from .defaults import get_default
 
 logger = logging.getLogger(__name__)
 
@@ -143,14 +144,14 @@ class DocumentWindower:
     into smaller windows of content.
     """
     
-    def __init__(self, default_window_size: int = 50):
+    def __init__(self, default_window_size: Optional[int] = None):
         """
         Initialize the document windower.
         
         Args:
             default_window_size: Default number of blocks per window
         """
-        self.default_window_size = default_window_size
+        self.default_window_size = default_window_size or get_default('document.window_size')
     
     def create_window(
         self, 
@@ -338,14 +339,14 @@ class TreeWindower:
     into smaller windows based on tree structure.
     """
     
-    def __init__(self, default_nodes_per_window: int = 20):
+    def __init__(self, default_nodes_per_window: Optional[int] = None):
         """
         Initialize the tree windower.
         
         Args:
             default_nodes_per_window: Default number of nodes per window
         """
-        self.default_nodes_per_window = default_nodes_per_window
+        self.default_nodes_per_window = default_nodes_per_window or get_default('document.tree_nodes_per_window')
     
     def _collect_nodes(self, node: Node) -> List[Node]:
         """

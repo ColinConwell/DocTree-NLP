@@ -1,0 +1,200 @@
+{
+  "metadata": {
+    "id": "196d606e-3bdf-80c8-8ff5-f0ec18d26e69",
+    "title": "Notion API Access",
+    "created_time": "2025-02-10T21:50:00+00:00",
+    "last_edited_time": "2025-02-13T18:07:00+00:00",
+    "last_fetched": "2025-03-19T01:39:18.419691"
+  },
+  "blocks": [
+    {
+      "id": "196d606e-3bdf-8012-b6c9-ffbc82dc1fe3",
+      "type": "heading_2",
+      "content": "Setting Up Notion API Access",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "196d606e-3bdf-8039-8c9a-e8702b9b2a9a",
+      "type": "numbered_list_item",
+      "content": "Create a Notion Integration:- Go to https://www.notion.so/my-integrations- Click \"New integration\"- Name your integration and select the workspace- Save the secret token for later use",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "196d606e-3bdf-8078-9681-d7bd24be1b86",
+      "type": "numbered_list_item",
+      "content": "Share Pages with Integration:- Open the Notion page you want to access- Click \"Share\" and invite your integration- Note down the page ID from the URL",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "196d606e-3bdf-80a4-9c99-f26e0eaf8582",
+      "type": "heading_2",
+      "content": "Making API Requests",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "196d606e-3bdf-803d-a72d-cd1dc25401ef",
+      "type": "numbered_list_item",
+      "content": "Install Dependencies:",
+      "has_children": true,
+      "indent_level": 0
+    },
+    {
+      "id": "196d606e-3bdf-804b-b11b-ce0210422fa5",
+      "type": "code",
+      "content": "bash\nnpm install @notionhq/client",
+      "has_children": false,
+      "indent_level": 1
+    },
+    {
+      "id": "196d606e-3bdf-80ff-bf5e-eafb566d2279",
+      "type": "numbered_list_item",
+      "content": "Initialize the Client:",
+      "has_children": true,
+      "indent_level": 0
+    },
+    {
+      "id": "196d606e-3bdf-80d0-9fc5-fd610c1c439a",
+      "type": "code",
+      "content": "javascript\nconst { Client } = require('@notionhq/client');\nconst notion = new Client({ auth: 'your-secret-token' });",
+      "has_children": false,
+      "indent_level": 1
+    },
+    {
+      "id": "196d606e-3bdf-80e7-bb0a-c9c3b2a7a0f4",
+      "type": "numbered_list_item",
+      "content": "Fetch Page Contents:",
+      "has_children": true,
+      "indent_level": 0
+    },
+    {
+      "id": "196d606e-3bdf-80d5-9768-e12250311984",
+      "type": "code",
+      "content": "javascript\nasync function getPageContent(pageId) {\n    try {\n        const response = await notion.blocks.children.list({\n            block_id: pageId\n        });\n        return response.results;\n    } catch (error) {\n        console.error(error);\n    }\n}",
+      "has_children": false,
+      "indent_level": 1
+    },
+    {
+      "id": "196d606e-3bdf-803e-9e26-cfc193d7bab6",
+      "type": "heading_2",
+      "content": "Processing the Response",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "196d606e-3bdf-804c-b4a9-dbfafb93fd65",
+      "type": "numbered_list_item",
+      "content": "Handle Different Block Types:",
+      "has_children": true,
+      "indent_level": 0
+    },
+    {
+      "id": "196d606e-3bdf-8094-86e0-fa9336edafe1",
+      "type": "code",
+      "content": "javascript\nfunction processBlocks(blocks) {\n    return blocks.map(block => {\n        switch(block.type) {\n            case 'paragraph':\n                return block.paragraph.rich_text;\n            case 'heading_1':\n                return block.heading_1.rich_text;\n            // Add more cases for other block types\n        }\n    });\n}",
+      "has_children": false,
+      "indent_level": 1
+    },
+    {
+      "id": "196d606e-3bdf-8069-b486-ef2cefa93d73",
+      "type": "heading_2",
+      "content": "Best Practices",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "196d606e-3bdf-8095-8cc8-e81f8e604f0a",
+      "type": "bulleted_list_item",
+      "content": "\u2022 Implement proper error handling for API requests",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "196d606e-3bdf-802b-816f-fd152debac0e",
+      "type": "bulleted_list_item",
+      "content": "\u2022 Use rate limiting to avoid hitting API limits",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "196d606e-3bdf-80c7-8115-ebdfd9c575ac",
+      "type": "bulleted_list_item",
+      "content": "\u2022 Cache responses when appropriate",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "196d606e-3bdf-808a-a960-dc22982bae1b",
+      "type": "bulleted_list_item",
+      "content": "\u2022 Handle pagination for large documents",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "196d606e-3bdf-80a5-9f9b-cf88f82b69cf",
+      "type": "heading_2",
+      "content": "Common Challenges",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "196d606e-3bdf-80a4-aec7-e19a57919260",
+      "type": "toggle",
+      "content": "Authentication Issues",
+      "has_children": true,
+      "indent_level": 0
+    },
+    {
+      "id": "196d606e-3bdf-80b6-b8cf-dd74770baa5e",
+      "type": "paragraph",
+      "content": "- Verify integration permissions",
+      "has_children": false,
+      "indent_level": 1
+    },
+    {
+      "id": "196d606e-3bdf-8023-87a9-fa3d75156b51",
+      "type": "paragraph",
+      "content": "- Check if page is shared with integration",
+      "has_children": false,
+      "indent_level": 1
+    },
+    {
+      "id": "196d606e-3bdf-80a3-995a-ee125902ef97",
+      "type": "paragraph",
+      "content": "- Ensure token is valid and not expired",
+      "has_children": false,
+      "indent_level": 1
+    },
+    {
+      "id": "196d606e-3bdf-80dc-8ac1-eb06eaad88af",
+      "type": "toggle",
+      "content": "Rate Limiting",
+      "has_children": true,
+      "indent_level": 0
+    },
+    {
+      "id": "196d606e-3bdf-80f6-b8bb-ced9a70fd72d",
+      "type": "paragraph",
+      "content": "- Notion API has rate limits of 3 requests per second",
+      "has_children": false,
+      "indent_level": 1
+    },
+    {
+      "id": "196d606e-3bdf-80f1-96eb-e0314e3dd1f8",
+      "type": "paragraph",
+      "content": "- Implement exponential backoff for retries",
+      "has_children": false,
+      "indent_level": 1
+    },
+    {
+      "id": "196d606e-3bdf-80ea-88b4-e7df38697bb6",
+      "type": "paragraph",
+      "content": "Remember to always refer to the official Notion API documentation for the most up-to-date information and best practices.",
+      "has_children": false,
+      "indent_level": 0
+    }
+  ]
+}

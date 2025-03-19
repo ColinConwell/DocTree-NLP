@@ -23,7 +23,7 @@ import matplotlib.pyplot as plt
 
 from notionlp.api_client import NotionClient
 from notionlp.structure import Document, Block, DocTree, Node
-from notionlp.cache_manager import CacheManager
+from notionlp.caching import CacheManager
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, 

@@ -9,7 +9,7 @@ from unittest.mock import patch, Mock
 from datetime import datetime
 
 from notionlp.api_client import NotionClient
-from notionlp.cache_manager import CacheManager
+from notionlp.caching import CacheManager
 
 # Sample test data
 SAMPLE_PAGE_DATA = {

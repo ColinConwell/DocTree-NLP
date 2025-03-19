@@ -1,0 +1,221 @@
+{
+  "metadata": {
+    "id": "199d606e-3bdf-804b-b094-ce1b3d1e4260",
+    "title": "Key NLP in Python",
+    "created_time": "2025-02-13T17:37:00+00:00",
+    "last_edited_time": "2025-02-13T18:07:00+00:00",
+    "last_fetched": "2025-03-19T01:39:19.089053"
+  },
+  "blocks": [
+    {
+      "id": "199d606e-3bdf-80e1-aecc-da6647d810c7",
+      "type": "heading_1",
+      "content": "Introduction to NLP Pipelines",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-806e-aa3a-fb19691e7f62",
+      "type": "paragraph",
+      "content": "Natural Language Processing (NLP) pipelines in Python typically involve several key steps to transform raw text into structured, analyzable data. Here are the common components:",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-80ef-9bad-e6a3b4d2e3e0",
+      "type": "heading_2",
+      "content": "1. Text Preprocessing",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-8053-bdb8-f727622fd6b4",
+      "type": "paragraph",
+      "content": "The first step in most NLP pipelines involves cleaning and standardizing text data:",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-80ab-b1bf-c8f641d2a8fe",
+      "type": "code",
+      "content": "python\nimport nltk\nfrom nltk.tokenize import word_tokenize\nfrom nltk.corpus import stopwords\n\ndef preprocess_text(text):\n    # Convert to lowercase\n    text = text.lower()\n    # Tokenize\n    tokens = word_tokenize(text)\n    # Remove stopwords\n    stop_words = set(stopwords.words('english'))\n    tokens = [t for t in tokens if t not in stop_words]\n    return tokens\n",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-804d-b242-e3d7936f518f",
+      "type": "heading_2",
+      "content": "2. Feature Extraction",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-802a-9d39-e41994345104",
+      "type": "paragraph",
+      "content": "Converting text into numerical features that machine learning models can process:",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-8002-8484-e20822374979",
+      "type": "code",
+      "content": "python\nfrom sklearn.feature_extraction.text import TfidfVectorizer\n\nvectorizer = TfidfVectorizer()\nfeatures = vectorizer.fit_transform(texts)\n",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-8058-8c4a-e1f95525db8d",
+      "type": "heading_2",
+      "content": "3. Model Building",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-80c6-b5ee-fec6ead75329",
+      "type": "paragraph",
+      "content": "Different types of models can be applied depending on the task:",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-803d-8069-d4977bd59e2b",
+      "type": "heading_3",
+      "content": "Text Classification Example",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-805a-a7bb-fd4a7a21f872",
+      "type": "code",
+      "content": "python\nfrom sklearn.naive_bayes import MultinomialNB\n\n# Train classifier\nclf = MultinomialNB()\nclf.fit(X_train, y_train)\n\n# Make predictions\npredictions = clf.predict(X_test)\n",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-80f7-9ac8-dba188d61e91",
+      "type": "heading_3",
+      "content": "Named Entity Recognition (NER)",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-8006-89e8-c002b166b449",
+      "type": "code",
+      "content": "python\nimport spacy\n\nnlp = spacy.load(\"en_core_web_sm\")\ndef extract_entities(text):\n    doc = nlp(text)\n    return [(ent.text, ent.label_) for ent in doc.ents]\n",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-804c-bb1c-e5c16c565f6e",
+      "type": "heading_2",
+      "content": "4. Modern Transformer-based Approaches",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-8035-ab8d-f0da6c902745",
+      "type": "paragraph",
+      "content": "Using state-of-the-art models like BERT:",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-80c4-8e40-cb023c30f50f",
+      "type": "code",
+      "content": "python\nfrom transformers import pipeline\n\n# Sentiment analysis\nsentiment_analyzer = pipeline(\"sentiment-analysis\")\nresult = sentiment_analyzer(\"I love working with Python!\")\n\n# Text generation\ngenerator = pipeline(\"text-generation\")\ntext = generator(\"Once upon a time\", max_length=50)\n",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-809e-a202-e40c7359cb1f",
+      "type": "heading_2",
+      "content": "Common Libraries and Tools",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-80f0-8e1c-dbb74d1c4d38",
+      "type": "bulleted_list_item",
+      "content": "\u2022 NLTK: Fundamental NLP tasks and linguistic data",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-80c0-b8ab-e4bceb1b0541",
+      "type": "bulleted_list_item",
+      "content": "\u2022 spaCy: Industrial-strength NLP with pre-trained models",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-80f3-a0b6-c94662b3c494",
+      "type": "bulleted_list_item",
+      "content": "\u2022 scikit-learn: Machine learning tools and algorithms",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-80a7-bd5d-fe4cb0b88bab",
+      "type": "bulleted_list_item",
+      "content": "\u2022 Transformers: Access to state-of-the-art models",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-80f3-b206-ce5053dfaba8",
+      "type": "bulleted_list_item",
+      "content": "\u2022 Gensim: Topic modeling and document similarity",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-80bd-bd41-c144a72e5c52",
+      "type": "heading_2",
+      "content": "Best Practices",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-80a7-a90a-e767fb4f068b",
+      "type": "bulleted_list_item",
+      "content": "\u2022 Always start with a simple pipeline and iterate based on results",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-80f1-8209-f042e293e22e",
+      "type": "bulleted_list_item",
+      "content": "\u2022 Use cross-validation to ensure model reliability",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-80cd-883c-c8b06f9ec01e",
+      "type": "bulleted_list_item",
+      "content": "\u2022 Consider computational resources when choosing models",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-80d5-a093-f580698d313b",
+      "type": "bulleted_list_item",
+      "content": "\u2022 Keep test data separate from training data",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-8014-bf0d-cfa603272b2b",
+      "type": "bulleted_list_item",
+      "content": "\u2022 Document preprocessing steps for reproducibility",
+      "has_children": false,
+      "indent_level": 0
+    },
+    {
+      "id": "199d606e-3bdf-8039-a4b4-d5a44a4a419b",
+      "type": "paragraph",
+      "content": "Remember that the choice of pipeline components depends heavily on your specific use case, available computational resources, and required accuracy levels.",
+      "has_children": false,
+      "indent_level": 0
+    }
+  ]
+}

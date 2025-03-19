@@ -12,7 +12,7 @@ from datetime import datetime
 
 from notionlp.api_client import NotionClient
 from notionlp.structure import Document, Block
-from notionlp.document_windowing import DocumentWindower, TreeWindower
+from notionlp.windowing import DocumentWindower, TreeWindower
 from notionlp.lazy_document import LazyDocument, create_lazy_document
 
 # Configure logging

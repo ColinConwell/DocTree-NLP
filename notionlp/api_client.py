@@ -9,9 +9,10 @@ from typing import List, Dict, Any, Optional, Tuple, Union, Literal
 from tqdm.auto import tqdm
 
 from .structure import Document, Block
-from .cache_manager import CacheManager, DEFAULT_CACHE_DIR
+from .caching import CacheManager
 from .rate_limiter import RateLimiter
 from .env_loader import find_notion_token
+from .defaults import get_default
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -24,19 +25,14 @@ class NotionClient:
     """Client for interacting with Notion API with enhanced content handling."""
 
     BASE_URL = "https://api.notion.com/v1"
-    API_VERSION = "2022-06-28"
-    DEFAULT_RATE_LIMIT = 3  # API limit: 3 requests per second
-    DEFAULT_CACHE_ENABLED = True
-    DEFAULT_MAX_CACHE_AGE_DAYS = None  # No expiration by default
-    AUTO_TOKEN = "auto"  # Special value to auto-discover token
-
+    
     def __init__(
         self,
-        token: Union[str, Literal["auto"]] = AUTO_TOKEN,
-        cache_enabled: bool = DEFAULT_CACHE_ENABLED,
-        cache_dir: str = DEFAULT_CACHE_DIR,
-        max_cache_age_days: Optional[int] = DEFAULT_MAX_CACHE_AGE_DAYS,
-        rate_limit: int = DEFAULT_RATE_LIMIT,
+        token: Union[str, Literal["auto"]] = None,
+        cache_enabled: bool = None,
+        cache_dir: str = None,
+        max_cache_age_days: Optional[int] = None,
+        rate_limit: int = None,
     ):
         """
         Initialize the Notion client.
@@ -56,7 +52,19 @@ class NotionClient:
         Raises:
             AuthenticationError: If token is "auto" and no token could be found
         """
-        if token == self.AUTO_TOKEN:
+        # Get default values from defaults system
+        auto_token = get_default('api.auto_token', 'auto')
+        self.api_version = get_default('api.version', '2022-06-28')
+        
+        # Use provided values or defaults
+        token = token if token is not None else auto_token
+        self.cache_enabled = cache_enabled if cache_enabled is not None else get_default('cache.enabled', True)
+        cache_dir = cache_dir if cache_dir is not None else get_default('cache.directory', 'cache')
+        max_cache_age_days = max_cache_age_days if max_cache_age_days is not None else get_default('cache.max_age_days', None)
+        rate_limit = rate_limit if rate_limit is not None else get_default('api.rate_limit', 3)
+        
+        # Handle token discovery
+        if token == auto_token:
             discovered_token = find_notion_token()
             if discovered_token is None:
                 raise AuthenticationError(
@@ -67,17 +75,17 @@ class NotionClient:
             logger.info("Using auto-discovered Notion API token")
         else:
             self.token = token
+            
         self.headers = {
             "Authorization": f"Bearer {self.token}",
-            "Notion-Version": self.API_VERSION,
+            "Notion-Version": self.api_version,
             "Content-Type": "application/json",
         }
 
         # Initialize cache manager if enabled
-        self.cache_enabled = cache_enabled
         if self.cache_enabled:
             self.cache_manager = CacheManager(
-                api_token=token,  # Pass token to create API-specific cache
+                api_token=self.token,  # Pass token to create API-specific cache
                 cache_dir=cache_dir,
                 max_age_days=max_cache_age_days,
             )
@@ -891,3 +899,319 @@ class CacheError(NotionNLPError):
     """Raised when cache operations fail."""
 
     pass
+
+
+# Other Clients -------------------------------------------------------
+
+
+class ObsidianClient:
+    """Client for reading and processing Obsidian vaults."""
+    
+    def __init__(
+        self,
+        vault_path: str,
+        cache_enabled: bool = None,
+        cache_dir: str = None,
+        max_cache_age_days: Optional[int] = None,
+    ):
+        """
+        Initialize the Obsidian client.
+        
+        Args:
+            vault_path: Path to the Obsidian vault directory
+            cache_enabled: Whether to use caching
+            cache_dir: Directory to store cache files
+            max_cache_age_days: Maximum age of cache entries in days (None for no expiry)
+        """
+        # Use provided values or defaults
+        self.vault_path = Path(vault_path)
+        self.cache_enabled = cache_enabled if cache_enabled is not None else get_default('cache.enabled', True)
+        cache_dir = cache_dir if cache_dir is not None else get_default('cache.directory', 'cache')
+        max_cache_age_days = max_cache_age_days if max_cache_age_days is not None else get_default('cache.max_age_days', None)
+        
+        # Validate vault path
+        if not self.vault_path.exists() or not self.vault_path.is_dir():
+            raise ValueError(f"Obsidian vault path does not exist or is not a directory: {vault_path}")
+        
+        # Initialize cache manager if enabled
+        if self.cache_enabled:
+            self.cache_manager = CacheManager(
+                api_token=f"obsidian-{self.vault_path.name}",  # Create vault-specific cache
+                cache_dir=cache_dir,
+                max_age_days=max_cache_age_days,
+                source_dir=get_default('cache.sources.internal', 'internal'),  # Use internal cache source
+            )
+            
+        logger.info(f"Initialized Obsidian client for vault: {self.vault_path}")
+    
+    def list_documents(self, use_cache: bool = None) -> List[Document]:
+        """
+        List available markdown documents in the vault.
+        
+        Args:
+            use_cache: Whether to use cache for this request (overrides instance setting)
+            
+        Returns:
+            List[Document]: List of available documents
+        """
+        # Placeholder implementation - will be expanded in future
+        should_use_cache = self.cache_enabled if use_cache is None else use_cache
+        
+        # Check cache first if enabled
+        if should_use_cache and hasattr(self, "cache_manager"):
+            cached_docs = self.cache_manager.get_cached_document_list()
+            if cached_docs is not None:
+                logger.debug("Using cached document list")
+                return cached_docs
+        
+        # Find all markdown files
+        markdown_files = list(self.vault_path.glob("**/*.md"))
+        documents = []
+        
+        for md_file in tqdm(markdown_files, desc="Processing Obsidian files", unit="file"):
+            # Get file stats
+            stats = md_file.stat()
+            created_time = datetime.fromtimestamp(stats.st_ctime)
+            modified_time = datetime.fromtimestamp(stats.st_mtime)
+            
+            # Extract title from filename or first heading in the file
+            title = md_file.stem  # Default to filename without extension
+            
+            # Create document
+            doc = Document(
+                id=str(md_file.relative_to(self.vault_path)),
+                title=title,
+                created_time=created_time,
+                last_edited_time=modified_time,
+                last_fetched=datetime.now(),
+                source_id=f"obsidian-{self.vault_path.name}"
+            )
+            documents.append(doc)
+        
+        # Update cache if enabled
+        if should_use_cache and hasattr(self, "cache_manager") and documents:
+            self.cache_manager.cache_document_list(documents)
+            
+        return documents
+    
+    def get_document(self, document_id: str, use_cache: bool = None) -> Document:
+        """
+        Get a document with all its content.
+        
+        Args:
+            document_id: ID (relative path) of the document to fetch
+            use_cache: Whether to use cache for this request (overrides instance setting)
+            
+        Returns:
+            Document: A Document instance with metadata and blocks
+        """
+        # This is a placeholder implementation
+        metadata, blocks = self.get_document_content(document_id, use_cache)
+        
+        if metadata:
+            document = Document(
+                id=metadata.id,
+                title=metadata.title,
+                created_time=metadata.created_time,
+                last_edited_time=metadata.last_edited_time,
+                last_fetched=metadata.last_fetched,
+                etag=metadata.etag,
+                blocks=blocks
+            )
+            return document
+        else:
+            # Return an empty document if metadata couldn't be fetched
+            return Document(
+                id=document_id,
+                title="Unknown Document",
+                created_time=datetime.now(),
+                last_edited_time=datetime.now(),
+                last_fetched=datetime.now(),
+                blocks=blocks
+            )
+    
+    def get_document_content(
+        self, document_id: str, use_cache: bool = None
+    ) -> Tuple[Document, List[Block]]:
+        """
+        Get content of a document with enhanced block handling.
+        
+        Args:
+            document_id: ID (relative path) of the document to fetch
+            use_cache: Whether to use cache for this request (overrides instance setting)
+            
+        Returns:
+            Tuple[Document, List[Block]]: A tuple containing metadata and blocks
+        """
+        # Implementation to be expanded in future
+        # For now, return empty metadata and blocks list
+        logger.info(f"Obsidian content fetching not yet implemented for document: {document_id}")
+        
+        # Create basic document metadata
+        doc = Document(
+            id=document_id,
+            title=Path(document_id).stem,
+            created_time=datetime.now(),
+            last_edited_time=datetime.now(),
+            last_fetched=datetime.now(),
+            source_id=f"obsidian-{self.vault_path.name}"
+        )
+        
+        return doc, []
+
+
+class LocalSource:
+    """Client for processing local directories of markdown files."""
+    
+    def __init__(
+        self,
+        directory_path: str,
+        file_pattern: str = "**/*.md",
+        cache_enabled: bool = None,
+        cache_dir: str = None,
+        max_cache_age_days: Optional[int] = None,
+    ):
+        """
+        Initialize the local source client.
+        
+        Args:
+            directory_path: Path to the directory containing markdown files
+            file_pattern: Glob pattern to match files (default: all markdown files)
+            cache_enabled: Whether to use caching
+            cache_dir: Directory to store cache files
+            max_cache_age_days: Maximum age of cache entries in days (None for no expiry)
+        """
+        # Use provided values or defaults
+        self.directory_path = Path(directory_path)
+        self.file_pattern = file_pattern
+        self.cache_enabled = cache_enabled if cache_enabled is not None else get_default('cache.enabled', True)
+        cache_dir = cache_dir if cache_dir is not None else get_default('cache.directory', 'cache')
+        max_cache_age_days = max_cache_age_days if max_cache_age_days is not None else get_default('cache.max_age_days', None)
+        
+        # Validate directory path
+        if not self.directory_path.exists() or not self.directory_path.is_dir():
+            raise ValueError(f"Directory path does not exist or is not a directory: {directory_path}")
+        
+        # Initialize cache manager if enabled
+        if self.cache_enabled:
+            dir_hash = self.directory_path.name  # Use directory name as part of cache key
+            self.cache_manager = CacheManager(
+                api_token=f"local-{dir_hash}",
+                cache_dir=cache_dir,
+                max_age_days=max_cache_age_days,
+                source_dir=get_default('cache.sources.internal', 'internal'),  # Use internal cache source
+            )
+            
+        logger.info(f"Initialized local source client for directory: {self.directory_path}")
+    
+    def list_documents(self, use_cache: bool = None) -> List[Document]:
+        """
+        List available markdown documents in the directory.
+        
+        Args:
+            use_cache: Whether to use cache for this request (overrides instance setting)
+            
+        Returns:
+            List[Document]: List of available documents
+        """
+        # Placeholder implementation - will be expanded in future
+        should_use_cache = self.cache_enabled if use_cache is None else use_cache
+        
+        # Check cache first if enabled
+        if should_use_cache and hasattr(self, "cache_manager"):
+            cached_docs = self.cache_manager.get_cached_document_list()
+            if cached_docs is not None:
+                logger.debug("Using cached document list")
+                return cached_docs
+        
+        # Find all matching files
+        files = list(self.directory_path.glob(self.file_pattern))
+        documents = []
+        
+        for file in tqdm(files, desc="Processing local files", unit="file"):
+            # Get file stats
+            stats = file.stat()
+            created_time = datetime.fromtimestamp(stats.st_ctime)
+            modified_time = datetime.fromtimestamp(stats.st_mtime)
+            
+            # Create document
+            doc = Document(
+                id=str(file.relative_to(self.directory_path)),
+                title=file.stem,  # Use filename without extension as title
+                created_time=created_time,
+                last_edited_time=modified_time,
+                last_fetched=datetime.now(),
+                source_id=f"local-{self.directory_path.name}"
+            )
+            documents.append(doc)
+        
+        # Update cache if enabled
+        if should_use_cache and hasattr(self, "cache_manager") and documents:
+            self.cache_manager.cache_document_list(documents)
+            
+        return documents
+    
+    def get_document(self, document_id: str, use_cache: bool = None) -> Document:
+        """
+        Get a document with all its content.
+        
+        Args:
+            document_id: ID (relative path) of the document to fetch
+            use_cache: Whether to use cache for this request (overrides instance setting)
+            
+        Returns:
+            Document: A Document instance with metadata and blocks
+        """
+        # This is a placeholder implementation
+        metadata, blocks = self.get_document_content(document_id, use_cache)
+        
+        if metadata:
+            document = Document(
+                id=metadata.id,
+                title=metadata.title,
+                created_time=metadata.created_time,
+                last_edited_time=metadata.last_edited_time,
+                last_fetched=metadata.last_fetched,
+                etag=metadata.etag,
+                blocks=blocks
+            )
+            return document
+        else:
+            # Return an empty document if metadata couldn't be fetched
+            return Document(
+                id=document_id,
+                title=Path(document_id).stem,
+                created_time=datetime.now(),
+                last_edited_time=datetime.now(),
+                last_fetched=datetime.now(),
+                blocks=blocks
+            )
+    
+    def get_document_content(
+        self, document_id: str, use_cache: bool = None
+    ) -> Tuple[Document, List[Block]]:
+        """
+        Get content of a document with enhanced block handling.
+        
+        Args:
+            document_id: ID (relative path) of the document to fetch
+            use_cache: Whether to use cache for this request (overrides instance setting)
+            
+        Returns:
+            Tuple[Document, List[Block]]: A tuple containing metadata and blocks
+        """
+        # Implementation to be expanded in future
+        # For now, return empty metadata and blocks list
+        logger.info(f"Local source content fetching not yet implemented for document: {document_id}")
+        
+        # Create basic document metadata
+        doc = Document(
+            id=document_id,
+            title=Path(document_id).stem,
+            created_time=datetime.now(),
+            last_edited_time=datetime.now(),
+            last_fetched=datetime.now(),
+            source_id=f"local-{self.directory_path.name}"
+        )
+        
+        return doc, []
