@@ -1,5 +1,5 @@
 """
-DocTree NLP: A toolkit for processing document trees with NLP capabilities.
+DocTree-NLP: A toolkit for processing document trees with NLP capabilities.
 
 This package provides tools for retrieving, caching, parsing, and analyzing
 content from various document sources including Notion, Obsidian, and local files.

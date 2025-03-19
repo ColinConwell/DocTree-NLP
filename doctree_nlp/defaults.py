@@ -1,5 +1,5 @@
 """
-Default configuration management for DocTree NLP.
+Default configuration management for DocTree-NLP.
 
 This module provides a centralized configuration system for managing default settings
 across the toolkit, with support for loading from environment files or config files.
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 class DefaultsManager:
     """
-    Manages default configuration settings for DocTree NLP.
+    Manages default configuration settings for DocTree-NLP.
     
     This class provides a central configuration system with dictionary-like access,
     the ability to load settings from environment variables, JSON, or YAML files.

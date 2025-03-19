@@ -112,9 +112,9 @@ def main():
         # Sample bullet point text
         sample_text = """
         • Project Overview
-          • Title: DocTree NLP Toolkit
+          • Title: DocTree-NLP Example
           • Version: 0.1.0
-          • Description: NLP tools for Notion documents
+          • Description: NLP tools for Notion, Markdown, and more
         • Features
           • Document Processing
             • Content extraction

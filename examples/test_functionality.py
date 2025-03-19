@@ -104,7 +104,7 @@ def main():
         print("\nTest completed successfully!")
 
     except DocTreeError as e:
-        print(f"DocTree NLP Error: {str(e)}")
+        print(f"DocTree-NLP Error: {str(e)}")
     except Exception as e:
         print(f"Unexpected error: {str(e)}")
 

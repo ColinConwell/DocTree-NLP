@@ -7,10 +7,10 @@ when needed.
 """
 
 import logging
-from typing import List, Dict, Any, Optional, Callable, Union
+from typing import List, Dict, Any, Optional
 from functools import wraps
-from datetime import datetime
 from pathlib import Path
+from datetime import datetime
 
 from .structure import Document, Block, DocTree
 from .api_client import NotionClient

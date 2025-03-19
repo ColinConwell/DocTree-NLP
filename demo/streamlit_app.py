@@ -1,5 +1,5 @@
 """
-Streamlit demo for DocTree NLP Library with caching and rate limiting.
+Streamlit demo for DocTree-NLP Library with caching and rate limiting.
 """
 import os
 import logging
@@ -22,7 +22,7 @@ logger.info(f"Python version: {os.sys.version}")
 
 try:
     # Configure Streamlit page
-    st.set_page_config(page_title="DocTree NLP Demo",
+    st.set_page_config(page_title="DocTree-NLP Demo",
                        page_icon="📚",
                        layout="wide",
                        initial_sidebar_state="expanded")
@@ -43,9 +43,9 @@ try:
         logger.info("Session state initialized")
 
     # Title and description
-    st.title("DocTree NLP Library Demo")
+    st.title("DocTree-NLP Library Demo")
     st.markdown("""
-    This demo showcases the core functionalities of the DocTree NLP library:
+    This demo showcases the core functionalities of the DocTree-NLP library:
     - Document listing and content retrieval with caching and rate limiting
     - Hierarchical document structure analysis
     - Natural Language Processing capabilities
@@ -67,7 +67,7 @@ try:
             st.session_state.text_processor = TextProcessor()
             st.session_state.tagger = Tagger()
             st.session_state.initialized = True
-            logger.info("Successfully initialized DocTree NLP clients")
+            logger.info("Successfully initialized DocTree-NLP clients")
         except Exception as e:
             st.error(f"Failed to initialize clients: {str(e)}")
             logger.error(f"Client initialization error: {str(e)}")

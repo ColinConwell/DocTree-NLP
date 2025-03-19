@@ -887,7 +887,7 @@ class NotionClient:
 
 
 class DocTreeError(Exception):
-    """Base exception for DocTree NLP library."""
+    """Base exception for DocTree-NLP library."""
     pass
 
 # Base exception class for the library

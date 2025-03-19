@@ -1,5 +1,5 @@
 """
-Example usage of the DocTree NLP library with caching and rate limiting.
+Example usage of the DocTree-NLP library with caching and rate limiting.
 """
 from doctree_nlp import (
     NotionClient, 

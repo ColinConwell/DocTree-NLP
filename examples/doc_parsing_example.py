@@ -1,5 +1,5 @@
 """
-Example script demonstrating the document parsing functionality of DocTree NLP Toolkit.
+Example script demonstrating the document parsing functionality of DocTree-NLP library.
 
 This script shows how to:
 1. Load example documents

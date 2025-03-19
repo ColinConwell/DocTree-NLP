@@ -1,5 +1,5 @@
 """
-Example demonstrating the new defaults configuration system in DocTree NLP Toolkit.
+Example demonstrating the new defaults configuration system in DocTree-NLP library.
 
 This script demonstrates how to use the defaults system to customize the toolkit's
 behavior and how to load and save configuration files.

@@ -1,5 +1,5 @@
 """
-Example demonstrating lazy loading functionality in DocTree NLP Toolkit.
+Example demonstrating lazy loading functionality in DocTree-NLP library.
 
 This script demonstrates how to use LazyDocument and LazyDocumentCollection
 to efficiently handle large document collections with minimal memory usage.

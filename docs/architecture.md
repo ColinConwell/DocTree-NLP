@@ -1,8 +1,8 @@
-# DocTree NLP Toolkit Architecture
+# DocTree-NLP Architecture
 
 ## Core Components
 
-The DocTree NLP Toolkit is designed with a modular architecture, with several key components:
+The DocTree-NLP is designed with a modular architecture, with several key components:
 
 ```mermaid
 graph TD

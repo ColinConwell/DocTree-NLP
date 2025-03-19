@@ -1,10 +1,12 @@
-# DocTree NLP Toolkit
+# DocTree-NLP
 
 A Python toolkit for processing document trees with NLP capabilities and hierarchical organization. Originally designed for Notion documents but now expanded to support multiple document sources including Obsidian vaults and local markdown files.
 
 ## Quick Start
 
-1. Install the DocTree NLP package:
+An example of how to use the DocTree-NLP with Notion via the [Notion API](https://developers.notion.com/reference/intro):
+
+1. Install the `doctree_nlp` package:
 
 ```bash
 pip install git+https://github.com/ColinConwell/DocTree-NLP.git
@@ -17,7 +19,7 @@ from dotenv import load_dotenv
 load_dotenv("/path/to/your/.env")
 ```
 
-3. Initialize the NotionClient with your Notion API token.
+3. Initialize the NotionClient with your Notion API token...
 
 ```python
 from doctree_nlp import NotionClient
@@ -29,7 +31,15 @@ client = NotionClient("YOUR_NOTION_API_TOKEN")
 client = NotionClient(token="auto")  # searches env vars, .env files, and prompts if needed
 ```
 
-4. List and process your documents:
+(Or, load a source folder of Notion-exported markdown files:)
+
+```python
+from doctree_nlp import LocalSource
+
+client = LocalSource(directory_path="/path/to/files")
+```
+
+1. List and process your documents:
 
 ```python
 # List all available documents
@@ -98,7 +108,7 @@ comments = raw_data.get('comments_data', [])
 block_types = [block['type'] for block in blocks_data]
 ```
 
-## Authentication Setup
+## Extended Example
 
 ### Getting your Notion API token
 
@@ -173,7 +183,7 @@ client = NotionClient("your-notion-api-token")
 
 ### Working with Environment Variables
 
-DocTree NLP Toolkit provides utilities for handling environment variables in a user-friendly way:
+DocTree-NLP provides utilities for handling environment variables in a user-friendly way:
 
 ```python
 from doctree_nlp.env_loader import get_env, get_required_env, get_api_key, EnvLoader
@@ -192,7 +202,7 @@ These functions search environment variables, `.env` files, and can even prompt 
 
 ### Global Configuration System
 
-DocTree NLP includes a flexible configuration system that allows you to customize default behavior throughout the toolkit:
+DocTree-NLP includes a flexible configuration system that allows you to customize default behavior throughout the toolkit:
 
 ```python
 from doctree_nlp.defaults import (
@@ -235,7 +245,7 @@ The configuration system includes settings for caching, API access, document han
 
 ## Document Structure and Architecture
 
-The DocTree NLP toolkit provides a comprehensive document structure model centered around the `Document` class. This structure has been designed to make working with document content more intuitive.
+The DocTree-NLP library provides a comprehensive document structure model centered around the `Document` class. This structure has been designed to make working with document content more intuitive.
 
 ### Core Classes
 
@@ -359,7 +369,7 @@ For a complete example of working with raw API data, see the [raw_data_example.p
 
 ## Performance Optimization
 
-For working with large documents or many documents at once, NotioNLPToolkit provides several performance optimization features.
+For working with large documents or many documents at once, DocTree-NLP provides several performance optimization features.
 
 ### Lazy Loading
 

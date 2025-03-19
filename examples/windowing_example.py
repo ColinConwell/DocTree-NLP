@@ -1,5 +1,5 @@
 """
-Example demonstrating document windowing functionality in DocTree NLP Toolkit.
+Example demonstrating document windowing functionality in DocTree-NLP library.
 
 This script demonstrates how to use DocumentWindower and TreeWindower
 to efficiently navigate and display large documents.
