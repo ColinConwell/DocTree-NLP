@@ -1,6 +1,12 @@
 # DocTree-NLP
 
-A Python toolkit for processing document trees with NLP capabilities and hierarchical organization. Originally designed for Notion documents but now expanded to support multiple document sources including Obsidian vaults and local markdown files.
+A Python toolkit for modern and classic NLP on document trees sourced from Notion, Obsidian (coming soon), or local directories of markdown or RST files.
+
+With *direct* inspiration from:
+- [notion_nlp](https://github.com/dario-github/notion-nlp)
+- [obsidiantools](https://github.com/mfarragher/obsidiantools)
+
+(And *indirect* inspiration from the countless others that inspired the [AI agents](#use-of-generative-ai) that helped me build this.)
 
 ## Quick Start
 
